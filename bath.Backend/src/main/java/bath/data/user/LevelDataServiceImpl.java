@@ -20,43 +20,41 @@ public class LevelDataServiceImpl implements LevelDataService {
 	}
 
 	@Override
-	public void addLevel(Level level) {
+	public void add(Level level) {
 		levelDao.save(level);
 	}
 
 	@Override
-	public Level getLevelByName(String name) throws NotExistException {
+	public Level findByName(String name) throws NotExistException {
 		Optional<Level> optionalLevel = levelDao.findById(name);
 		if (optionalLevel.isPresent()) {
 			return optionalLevel.get();
 		} else {
-			throw new NotExistException("Level name", name);
+			throw new NotExistException("Level Name", name);
 		}
 	}
 
 	@Override
-	public List<Level> getAllLevels() {
+	public List<Level> getAll() {
 		return levelDao.findAll();
 	}
 
 	@Override
-	public void updateLevelByName(String name, double discountedRatio) throws NotExistException {
-		Optional<Level> optionalLevel = levelDao.findById(name);
+	public void update(Level level) throws NotExistException {
+		Optional<Level> optionalLevel = levelDao.findById(level.getName());
 		if (optionalLevel.isPresent()) {
-			Level level = optionalLevel.get();
-			level.setDiscountedRatio(discountedRatio);
 			levelDao.save(level);
 		} else {
-			throw new NotExistException("Level name", name);
+			throw new NotExistException("Level Name", level.getName());
 		}
 	}
 
 	@Override
-	public void deleteLevelByName(String name) throws NotExistException {
+	public void deleteByName(String name) throws NotExistException {
 		if (levelDao.existsById(name)) {
 			levelDao.deleteById(name);
 		} else {
-			throw new NotExistException("Level name", name);
+			throw new NotExistException("Level Name", name);
 		}
 	}
 }

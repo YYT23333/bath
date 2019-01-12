@@ -3,6 +3,7 @@ package bath.response.groupon;
 import bath.response.Response;
 
 public class GrouponAddResponse extends Response {
+
     private String id;
 
     public GrouponAddResponse() {

@@ -2,17 +2,19 @@ package bath.dataservice.user;
 
 import bath.entity.user.Level;
 import bath.exception.NotExistException;
+import org.aspectj.weaver.ast.Not;
+
 import java.util.List;
 
 public interface LevelDataService {
 
-	void addLevel(Level level);
+	void add(Level level);
 
-	Level getLevelByName(String name) throws NotExistException;
+	Level findByName(String name) throws NotExistException;
 
-	List<Level> getAllLevels();
+	List<Level> getAll();
 
-	void updateLevelByName(String name, double discountedRatio) throws NotExistException;
+	void update(Level level)throws NotExistException;
 
-	void deleteLevelByName(String name) throws NotExistException;
+	void deleteByName(String name) throws NotExistException;
 }

@@ -8,7 +8,7 @@ public class UserLoginResponse extends LoginResponse {
 	public UserLoginResponse() {
 	}
 
-	public UserLoginResponse( UserItem user) {
+	public UserLoginResponse(UserItem user) {
 		this.user = user;
 	}
 

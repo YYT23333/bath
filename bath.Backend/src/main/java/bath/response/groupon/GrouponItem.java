@@ -1,42 +1,36 @@
-package bath.entity.groupon;
+package bath.response.groupon;
 
-import javax.persistence.*;
+import bath.entity.groupon.Groupon;
+
 import java.util.Date;
 
-@Entity
-@Table
-public class Groupon {
-
-    @Id
+public class GrouponItem {
     private String id;
-
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "originalPrice")
     private double originalPrice;
-
-    @Column(name = "price")
     private double price;
-
-    @Column(name = "takeEffectTime")
     private Date takeEffectTime;
-
-    @Column(name = "loseEffectTime")
     private Date loseEffectTime;
-
-    @Column(name="putOnShelvesTime")
     private Date putOnShelveTime;
-
-    @Column(name="pullOffShelvesTime")
     private Date pullOffShelveTime;
-
-    @Column(name = "description")
     private String description;
-
-    @Column(name = "amount")
     private int amount;
 
+    public GrouponItem() {
+    }
+
+    public GrouponItem(Groupon groupon){
+        this.id=groupon.getId();
+        this.name=groupon.getName();
+        this.originalPrice=groupon.getOriginalPrice();
+        this.price=groupon.getPrice();
+        this.takeEffectTime=groupon.getTakeEffectTime();
+        this.loseEffectTime=groupon.getLoseEffectTime();
+        this.putOnShelveTime=groupon.getPutOnShelveTime();
+        this.pullOffShelveTime=groupon.getPullOffShelveTime();
+        this.description=groupon.getDescription();
+        this.amount=groupon.getAmount();
+    }
 
     public String getId() {
         return id;
@@ -70,15 +64,6 @@ public class Groupon {
         this.price = price;
     }
 
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Date getTakeEffectTime() {
         return takeEffectTime;
     }
@@ -94,7 +79,6 @@ public class Groupon {
     public void setLoseEffectTime(Date loseEffectTime) {
         this.loseEffectTime = loseEffectTime;
     }
-
 
     public Date getPutOnShelveTime() {
         return putOnShelveTime;
@@ -112,11 +96,19 @@ public class Groupon {
         this.pullOffShelveTime = pullOffShelveTime;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getAmount() {
         return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }

@@ -1,7 +1,9 @@
 package bath.response.user;
 
+import bath.entity.user.User;
 import bath.response.Response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserListResponse extends Response {
@@ -10,8 +12,13 @@ public class UserListResponse extends Response {
 	public UserListResponse() {
 	}
 
-	public UserListResponse(List<UserItem> users) {
-		this.users = users;
+	public UserListResponse(List<User> users) {
+		if(users!=null && users.size()>0){
+			this.users=new ArrayList<>();
+			for(User temp:users){
+				this.users.add(new UserItem(temp));
+			}
+		}
 	}
 
 	public List<UserItem> getUsers() {

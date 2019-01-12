@@ -14,12 +14,12 @@ public class UserItem {
 	private Role role;
 	private String phone;
 	private String levelName;
-	private int integration;
-	private double balance;
+//	private int integration;
+//	private double balance;
 	private List<Groupon> orders;
 	private List<Groupon> carts;
 	private List<Address> addresses;
-	private List<Coupon> coupons;
+//	private List<Coupon> coupons;
 
 	public UserItem(User user){
 		this.openid=user.getOpenid();
@@ -28,12 +28,12 @@ public class UserItem {
 		this.role=user.getRole();
 		this.phone=user.getPhone();
 		this.levelName=user.getLevel();
-		this.integration=user.getIntegration();
-		this.balance=user.getBalance();
+//		this.integration=user.getIntegration();
+//		this.balance=user.getBalance();
 		this.orders=user.getCarts();
 		this.carts=user.getCarts();
 		this.addresses=user.getAddresses();
-		this.coupons=user.getCoupons();
+//		this.coupons=user.getCoupons();
 	}
 
 	public String getOpenid() {
@@ -84,21 +84,21 @@ public class UserItem {
 		this.levelName = levelName;
 	}
 
-	public int getIntegration() {
-		return integration;
-	}
-
-	public void setIntegration(int integration) {
-		this.integration = integration;
-	}
-
-	public double getBalance() {
-		return balance;
-	}
-
-	public void setBalance(double balance) {
-		this.balance = balance;
-	}
+//	public int getIntegration() {
+//		return integration;
+//	}
+//
+//	public void setIntegration(int integration) {
+//		this.integration = integration;
+//	}
+//
+//	public double getBalance() {
+//		return balance;
+//	}
+//
+//	public void setBalance(double balance) {
+//		this.balance = balance;
+//	}
 
 	public List<Groupon> getOrders() {
 		return orders;
@@ -124,11 +124,11 @@ public class UserItem {
 		this.addresses = addresses;
 	}
 
-	public List<Coupon> getCoupons() {
-		return coupons;
-	}
-
-	public void setCoupons(List<Coupon> coupons) {
-		this.coupons = coupons;
-	}
+//	public List<Coupon> getCoupons() {
+//		return coupons;
+//	}
+//
+//	public void setCoupons(List<Coupon> coupons) {
+//		this.coupons = coupons;
+//	}
 }

@@ -20,17 +20,17 @@ public class GrouponDataServiceImpl implements GrouponDataService {
     }
 
     @Override
-    public void addGroupon(Groupon groupon) {
+    public void add(Groupon groupon) {
         grouponDao.save(groupon);
     }
 
     @Override
     public Groupon findById(String id) throws NotExistException {
-        Optional<Groupon> optionalUser = grouponDao.findById(id);
-        if(optionalUser.isPresent()) {
-            return optionalUser.get();
+        Optional<Groupon> optional = grouponDao.findById(id);
+        if (optional.isPresent()) {
+            return optional.get();
         } else {
-            throw new NotExistException("团购openid", id);
+            throw new NotExistException("Groupon ID", id);
         }
     }
 
@@ -40,14 +40,21 @@ public class GrouponDataServiceImpl implements GrouponDataService {
     }
 
     @Override
-    public void updateGroupon(Groupon groupon) {
-        grouponDao.save(groupon);
+    public void update(Groupon groupon) throws NotExistException {
+        if (grouponDao.findById(groupon.getId()).isPresent()) {
+            grouponDao.save(groupon);
+        } else {
+            throw new NotExistException("Groupon ID", groupon.getId());
+        }
 
     }
 
     @Override
-    public void deleteGrouponById(String id) throws NotExistException {
-        findById(id);
-        grouponDao.deleteById(id);
+    public void deleteById(String id) throws NotExistException {
+        if (grouponDao.findById(id).isPresent()) {
+            grouponDao.deleteById(id);
+        } else {
+            throw new NotExistException("Groupon ID", id);
+        }
     }
 }

@@ -5,6 +5,7 @@ import bath.response.Response;
 import java.util.List;
 
 public class AdminListResponse extends Response {
+
 	private List<AdminItem> admins;
 
 	public AdminListResponse() {

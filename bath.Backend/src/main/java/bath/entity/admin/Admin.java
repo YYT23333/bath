@@ -38,6 +38,9 @@ public class Admin {
 		this.avatarUrl = avatarUrl;
 	}
 
+
+
+
 	public String getId() {
 		return id;
 	}

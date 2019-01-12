@@ -5,7 +5,6 @@ import bath.dataservice.groupon.GrouponDataService;
 import bath.entity.groupon.Groupon;
 import bath.exception.NotExistException;
 import bath.response.groupon.*;
-import bath.util.OrderUUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +34,13 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         groupon.setAmount(amount);
         String id=UUID.randomUUID().toString();
         groupon.setId(id);
-        grouponDataService.addGroupon(groupon);
+        grouponDataService.add(groupon);
         return new GrouponAddResponse(id);
     }
 
     @Override
     public GrouponDeleteResponse deleteGroupon(String id) throws NotExistException {
-        grouponDataService.deleteGrouponById(id);
+        grouponDataService.deleteById(id);
         return new GrouponDeleteResponse(id);
     }
 
@@ -57,7 +56,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         groupon.setPullOffShelveTime(pullOffShelvesTime);
         groupon.setDescription(description);
         groupon.setAmount(amount);
-        grouponDataService.updateGroupon(groupon);
+        grouponDataService.update(groupon);
         return new GrouponUpdateResponse(id);
     }
 
@@ -66,7 +65,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         Groupon groupon=grouponDataService.findById(id);
         groupon.setPutOnShelveTime(new Date());
         groupon.setPullOffShelveTime(null);
-        grouponDataService.updateGroupon(groupon);
+        grouponDataService.update(groupon);
         return new GrouponUpdateResponse(id);
     }
 
@@ -74,7 +73,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
     public GrouponUpdateResponse pullOffShelves(String id) throws NotExistException {
         Groupon groupon=grouponDataService.findById(id);
         groupon.setPullOffShelveTime(new Date());
-        grouponDataService.updateGroupon(groupon);
+        grouponDataService.update(groupon);
         return new GrouponUpdateResponse(id);
     }
 

@@ -50,15 +50,15 @@ public interface UserBlService {
 	 * @param avatarUrl
 	 * @param phone
 	 * @param levelName
-	 * @param integration
-	 * @param balance
+	 //* @param integration
+	 //* @param balance
 	 * @param orders
 	 * @param carts
 	 * @param addresses
-	 * @param coupons
+	'' * @param coupons
 	 * @return 是否成功
 	 */
-	InfoResponse updateUser(String openid,String username,Role role,String avatarUrl,String phone,String levelName,int integration,double balance,List<Order> orders,List<Groupon> carts,List<Address> addresses,List<Coupon> coupons)throws NotExistException;
+	InfoResponse updateUser(String openid,String username,Role role,String avatarUrl,String phone,String levelName,/*int integration,double balance,*/List<Order> orders,List<Groupon> carts,List<Address> addresses/*,List<Coupon> coupons*/)throws NotExistException;
 	/**
 	 * 根据微信openid删除用户(Admin)
 	 * @param openid 微信openid

@@ -1,6 +1,9 @@
 package bath.response;
 
+import com.google.gson.annotations.Expose;
+
 public class InfoResponse extends Response {
+	@Expose
 	private String info;
 
 	public InfoResponse(){

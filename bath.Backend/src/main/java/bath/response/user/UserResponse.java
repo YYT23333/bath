@@ -1,5 +1,6 @@
 package bath.response.user;
 
+import bath.entity.user.User;
 import bath.response.Response;
 
 public class UserResponse extends Response {
@@ -8,8 +9,8 @@ public class UserResponse extends Response {
 	public UserResponse() {
 	}
 
-	public UserResponse(UserItem user) {
-		this.user = user;
+	public UserResponse(User user) {
+		this.user = new UserItem(user);
 	}
 
 	public UserItem getUser() {

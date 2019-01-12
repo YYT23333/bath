@@ -26,18 +26,18 @@ public class User {
     private String phone; //电话号码
     @Column(name="level")
     private String level; //用户所属会员等级
-    @Column(name="integration")
-    private int integration;//积分
-    @Column(name="balance")
-    private double balance;//储值金余额
+//    @Column(name="integration")
+//    private int integration;//积分
+//    @Column(name="balance")
+//    private double balance;//储值金余额
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Order> orders;//订单
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Groupon> carts;//购物车
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> addresses;//地址
-    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<Coupon> coupons;//优惠券
+//    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+//    private List<Coupon> coupons;//优惠券
 
     public User() {
     }
@@ -49,12 +49,12 @@ public class User {
         this.avatarUrl = avatarUrl;
         this.phone = "";
         this.level = "common";
-        this.integration = 0;
-        this.balance = 0;
+        //this.integration = 0;
+        //this.balance = 0;
         this.orders = new ArrayList<>();
         this.carts = new ArrayList<>();
         this.addresses = new ArrayList<>();
-        this.coupons = new ArrayList<>();
+        //this.coupons = new ArrayList<>();
 
     }
 
@@ -65,13 +65,25 @@ public class User {
         this.avatarUrl = avatarUrl;
         this.phone = phone;
         this.level = "common";
-        this.integration = 0;
-        this.balance = 0;
+        //this.integration = 0;
+        //this.balance = 0;
         this.orders = new ArrayList<>();
         this.carts = new ArrayList<>();
         this.addresses = new ArrayList<>();
-        this.coupons = new ArrayList<>();
+        //this.coupons = new ArrayList<>();
 
+    }
+
+    public User(String openid, String username, Role role, String avatarUrl, String phone, String level, List<Order> orders, List<Groupon> carts, List<Address> addresses) {
+        this.openid = openid;
+        this.username = username;
+        this.role = role;
+        this.avatarUrl = avatarUrl;
+        this.phone = phone;
+        this.level = level;
+        this.orders = orders;
+        this.carts = carts;
+        this.addresses = addresses;
     }
 
     public String getOpenid() {
@@ -112,21 +124,21 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-    public int getIntegration() {
-        return integration;
-    }
+//    public int getIntegration() {
+//        return integration;
+//    }
+//
+//    public void setIntegration(int integration) {
+//        this.integration = integration;
+//    }
 
-    public void setIntegration(int integration) {
-        this.integration = integration;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
+//    public double getBalance() {
+//        return balance;
+//    }
+//
+//    public void setBalance(double balance) {
+//        this.balance = balance;
+//    }
 
     public List<Order> getOrders() {
         return orders;
@@ -152,13 +164,13 @@ public class User {
         this.addresses = addresses;
     }
 
-    public List<Coupon> getCoupons() {
-        return coupons;
-    }
-
-    public void setCoupons(List<Coupon> coupons) {
-        this.coupons = coupons;
-    }
+//    public List<Coupon> getCoupons() {
+//        return coupons;
+//    }
+//
+//    public void setCoupons(List<Coupon> coupons) {
+//        this.coupons = coupons;
+//    }
 
     public Role getRole() {
         return role;

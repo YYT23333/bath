@@ -29,7 +29,9 @@ public class XMLUtil {
             xmlStr = xmlStr.replaceFirst("encoding=\".*\"", "encoding=\"UTF-8\"");
             Document document = DocumentHelper.parseText(xmlStr);
             Element root = document.getRootElement();
-            return root.element("nonce_str").getStringValue();
+            Element x=root.element("nonce_str");
+            String s=x.getStringValue();
+            return s;
         } catch (DocumentException e) {
             e.printStackTrace();
             throw new SystemException();

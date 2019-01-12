@@ -3,6 +3,7 @@ package bath.response.admin;
 import bath.response.Response;
 
 public class AdminResponse extends Response {
+
 	private AdminItem admin;
 
 	public AdminResponse() {

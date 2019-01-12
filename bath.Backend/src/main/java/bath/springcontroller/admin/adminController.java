@@ -2,6 +2,7 @@ package bath.springcontroller.admin;
 
 
 import bath.blservice.admin.AdminBlService;
+import bath.entity.address.Address;
 import bath.exception.DuplicateUsernameException;
 import bath.exception.NotExistException;
 import bath.response.BoolResponse;
@@ -9,12 +10,8 @@ import bath.response.InfoResponse;
 import bath.response.WrongResponse;
 import bath.response.admin.AdminListResponse;
 import bath.response.admin.AdminResponse;
-import bath.response.event.EventLoadResponse;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -110,7 +107,7 @@ public class adminController {
     })
     @RequestMapping(value = "/isAdminUsernameExistent", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = BoolResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -129,7 +126,7 @@ public class adminController {
     })
     @RequestMapping(value = "/addAdmin", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -141,7 +138,7 @@ public class adminController {
     @ApiOperation(value = "获取管理员列表", notes = "获取管理员列表")
     @RequestMapping(value = "/getAdminList", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = AdminListResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -158,7 +155,7 @@ public class adminController {
     })
     @RequestMapping(value = "/getAdmin", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = AdminResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -173,7 +170,7 @@ public class adminController {
     })
     @RequestMapping(value = "/getAdminByUsername", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = AdminResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -193,7 +190,7 @@ public class adminController {
     })
     @RequestMapping(value = "/updateAdmin", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = AdminResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -208,7 +205,7 @@ public class adminController {
     })
     @RequestMapping(value = "/deleteAdmin", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = BoolResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -224,7 +221,7 @@ public class adminController {
     })
     @RequestMapping(value = "/loginAdmin", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = String.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody

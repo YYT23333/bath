@@ -1,5 +1,7 @@
 package bath.entity.address;
 
+import bath.entity.user.User;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,9 +11,10 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name="receiver")
     private String receiver;//收货人姓名
 
@@ -46,13 +49,13 @@ public class Address {
         this.id = id;
     }
 
-//    public User getUser() {
-//        return user;
-//    }
-//
-//    public void setUser(User user) {
-//        this.user = user;
-//    }
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getReceiver() {
         return receiver;

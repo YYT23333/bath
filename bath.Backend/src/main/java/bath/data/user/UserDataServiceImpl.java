@@ -25,55 +25,39 @@ public class UserDataServiceImpl implements UserDataService {
 		this.userDao = userDao;
 	}
 
+
+
 	@Override
-	public void saveUser(User user) {
+	public void add(User user) {
 		userDao.save(user);
 	}
 
 	@Override
-	public void addUser(User user) {
-		userDao.save(user);
-	}
-
-	@Override
-	public User getUserByOpenid(String openid) throws NotExistException {
+	public User findByOpenid(String openid) throws NotExistException {
 		Optional<User> optionalUser = userDao.findById(openid);
 		if(optionalUser.isPresent()) {
 			return optionalUser.get();
 		} else {
-			throw new NotExistException("用户openid", openid);
+			throw new NotExistException("User Openid", openid);
 		}
 	}
 
 	@Override
-	public List<User> getAllUsers() {
+	public List<User> getAll() {
 		return userDao.findAll();
 	}
 
 	@Override
-	public void updateUserByOpenid(String openid, String username, Role role, String avatarUrl, String phone, String level, int integration, double balance, List<Order> orders, List<Groupon> carts, List<Address> addresses, List<Coupon> coupons) throws NotExistException {
-		Optional<User> optionalUser = userDao.findById(openid);
-		if(optionalUser.isPresent()) {
-			User user = optionalUser.get();
-			user.setUsername(username);
-			user.setRole(role);
-			user.setAvatarUrl(avatarUrl);
-			user.setAvatarUrl(phone);
-			user.setLevel(level);
-			user.setIntegration(integration);
-			user.setBalance(balance);
-			user.setOrders(orders);
-			user.setCarts(carts);
-			user.setAddresses(addresses);
-			user.setCoupons(coupons);
+	public void update(User user) throws NotExistException {
+		if(userDao.findByOpenid(user.getOpenid()).isPresent()){
 			userDao.save(user);
-		} else {
-			throw new NotExistException("User openid", openid);
+		}else{
+			throw new NotExistException("User Openid",user.getOpenid());
 		}
 	}
 
 	@Override
-	public void deleteUserByOpenid(String openid) throws NotExistException {
+	public void deleteUByOpenid(String openid) throws NotExistException {
 		Optional<User> optionalUser = userDao.findById(openid);
 		if (optionalUser.isPresent()) {
 			userDao.deleteById(openid);

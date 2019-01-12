@@ -7,18 +7,18 @@ import java.util.Optional;
 
 public interface AdminDataService {
 
-	boolean isAdminExistent(String username);
+	boolean isExistent(String username);
 
-	void addAdmin(Admin admin);
+	void add(Admin admin);
 
-	Admin getAdminById(String id) throws NotExistException;
+	Admin findById(String id) throws NotExistException;
 
-	Admin getAdminByUsername(String username) throws NotExistException;
+	Admin findByUsername(String username) throws NotExistException;
 
-	List<Admin> getAllAdmins();
+	List<Admin> getAll();
 
-	void updateAdminById(String id, String username, String password, String limits, String date, String face) throws NotExistException;
+	void update(Admin admin)throws NotExistException;
 
 	//注意：删除Admin时统一使用deleteAdminById（封装了相关数据连锁删除）
-	void deleteAdminById(String id) throws NotExistException;
+	void deleteById(String id) throws NotExistException;
 }

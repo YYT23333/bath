@@ -4,13 +4,11 @@ import bath.data.dao.admin.AdminDao;
 import bath.data.dao.user.UserDao;
 import bath.entity.admin.Admin;
 import bath.entity.user.User;
-import io.jsonwebtoken.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +46,7 @@ public class JwtUserDetailsServiceImpl implements JwtUserDetailsService {
             System.out.println("isPresent");
             return new JwtUser(optionalUser.get().getOpenid(), "", Collections.singletonList(JwtRole.USER));
         } else {
-            List<Admin> admins = adminDao.findAdminByUsername(username);
+            List<Admin> admins = adminDao.findByUsername(username);
             if (!admins.isEmpty()) {
                 Admin admin = admins.get(0);
                 return new JwtUser(admin.getUsername(), admin.getPassword(), Collections.singletonList(JwtRole.ADMIN));
@@ -61,7 +59,7 @@ public class JwtUserDetailsServiceImpl implements JwtUserDetailsService {
          * 2018-9-3
          */
 //        List<User> users = userDao.findUserByUsername(username);
-//        List<Admin> admins = adminDao.findAdminByUsername(username);
+//        List<Admin> admins = adminDao.findByUsername(username);
 //        if (users.isEmpty() && admins.isEmpty()) {
 //            throw new UsernameNotFoundException("username not found");
 //        } else {

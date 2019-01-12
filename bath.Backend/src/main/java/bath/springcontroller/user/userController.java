@@ -8,10 +8,10 @@ import bath.entity.order.Order;
 import bath.exception.CannotGetOpenIdAndSessionKeyException;
 import bath.exception.NotExistException;
 import bath.publicdatas.account.Role;
-import bath.response.InfoResponse;
-import bath.response.Response;
-import bath.response.WrongResponse;
-import bath.response.event.EventLoadResponse;
+import bath.response.*;
+import bath.response.account.OpenIdAndSessionKeyResponse;
+import bath.response.user.LevelListResponse;
+import bath.response.user.QrCodeResponse;
 import bath.response.user.UserListResponse;
 import bath.response.user.UserResponse;
 import io.swagger.annotations.*;
@@ -41,7 +41,7 @@ public class userController {
     })
     @RequestMapping(value = "/uploadHead", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = BoolResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -91,11 +91,11 @@ public class userController {
     })
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse addUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username, @RequestParam(name="phone")String phone) throws NotExistException {
+    public ResponseEntity<Response> addUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username, @RequestParam(name="phone")String phone) throws NotExistException {
         boolean is = true;
         File file = new File(headPath);
         String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
@@ -127,7 +127,7 @@ public class userController {
         }
         InfoResponse r = userBlService.addUser(openid, username,path,phone);
         headPath = "";
-        return r;
+        return new ResponseEntity<>(r,HttpStatus.OK);
     }
 
     @ApiOperation(value = "增加用户", notes = "增加用户")
@@ -138,24 +138,22 @@ public class userController {
     })
     @RequestMapping(path = "/addUserWithoutAvatar", method = RequestMethod.POST,produces = "application/json")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse addUserWithoutFace(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username, @RequestParam(name = "phone") String phone) throws NotExistException {
-        InfoResponse r = userBlService.addUser(openid, username, "", phone);
-        return r;
+    public ResponseEntity<Response> addUserWithoutFace(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username, @RequestParam(name = "phone") String phone) throws NotExistException {
+        return new ResponseEntity<>(userBlService.addUser(openid,username,"",phone),HttpStatus.OK);
     }
     @ApiOperation(value = "获取用户列表", notes = "获取用户列表")
     @RequestMapping(value = "/getUserList", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = UserListResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public UserListResponse getUserList() {
-        UserListResponse r = userBlService.getUserList();
-        return r;
+    public ResponseEntity<Response> getUserList() {
+        return new ResponseEntity<>(userBlService.getUserList(),HttpStatus.OK);
     }
 
     @ApiOperation(value = "获取用户", notes = "获取用户")
@@ -164,13 +162,12 @@ public class userController {
     })
     @RequestMapping(value = "/getUser", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = UserResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public UserResponse getUser(@RequestParam(name = "openid") String openid) throws NotExistException {
-        UserResponse r = userBlService.getUser(openid);
-        return r;
+    public ResponseEntity<Response> getUser(@RequestParam(name = "openid") String openid) throws NotExistException {
+        return new ResponseEntity<>(userBlService.getUser(openid),HttpStatus.OK);
     }
 
     //todo 考虑一下要不要这个方法
@@ -192,11 +189,11 @@ public class userController {
     })
     @RequestMapping(value = "/updateUser", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse updateUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username,@RequestParam("role")String role,  @RequestParam(name = "avatarUrl") String avatarUrl,@RequestParam("phone")String phone, @RequestParam(name = "levelName") String levelName, @RequestParam(name = "integration") int integration, @RequestParam(name = "balance") double balance, @RequestParam(name = "orders") ArrayList<Order> orders, @RequestParam(name = "carts")ArrayList<Groupon> carts, @RequestParam(name = "addresses") ArrayList<Address> addresses, @RequestParam(name = "coupons") ArrayList<Coupon> coupons) throws NotExistException {
+    public ResponseEntity<Response> updateUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username,@RequestParam("role")String role,  @RequestParam(name = "avatarUrl") String avatarUrl,@RequestParam("phone")String phone, @RequestParam(name = "levelName") String levelName, @RequestParam(name = "integration") int integration, @RequestParam(name = "balance") double balance, @RequestParam(name = "orders") ArrayList<Order> orders, @RequestParam(name = "carts")ArrayList<Groupon> carts, @RequestParam(name = "addresses") ArrayList<Address> addresses, @RequestParam(name = "coupons") ArrayList<Coupon> coupons) throws NotExistException {
         boolean is = true;
         File file = new File(headPath);
         String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
@@ -226,9 +223,9 @@ public class userController {
         if (file.exists() && file.isFile()) {
             file.delete();
         }
-        InfoResponse r = userBlService.updateUser(openid,username,new Role(role),avatarUrl,phone,levelName,integration,balance,orders,carts,addresses,coupons);
+        InfoResponse r = userBlService.updateUser(openid,username,new Role(role),avatarUrl,phone,levelName,/*integration,balance,*/orders,carts,addresses/*,coupons*/);
         headPath = "";
-        return r;
+        return new ResponseEntity<>(r,HttpStatus.OK);
     }
 
     @ApiOperation(value = "删除用户", notes = "删除用户")
@@ -237,13 +234,12 @@ public class userController {
     })
     @RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse deleteUser(@RequestParam(name = "openid") String openid) throws NotExistException {
-        InfoResponse r = userBlService.deleteUser(openid);
-        return r;
+    public ResponseEntity<Response> deleteUser(@RequestParam(name = "openid") String openid) throws NotExistException {
+        return new ResponseEntity<>(userBlService.deleteUser(openid),HttpStatus.OK);
     }
 
     @ApiOperation(value = "添加会员等级信息", notes = "添加会员等级信息")
@@ -253,18 +249,18 @@ public class userController {
     })
     @RequestMapping(value = "/addLevel", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse addLevel(@RequestParam(name = "name") String name, @RequestParam(name = "discountedRatio") String discountedRatio) throws NotExistException {
-        return userBlService.addLevel(name, Double.parseDouble(discountedRatio));
+    public ResponseEntity<Response> addLevel(@RequestParam(name = "name") String name, @RequestParam(name = "discountedRatio") String discountedRatio) throws NotExistException {
+        return new ResponseEntity<>(userBlService.addLevel(name, Double.parseDouble(discountedRatio)),HttpStatus.OK);
     }
 
     @ApiOperation(value = "获取所有会员等级信息", notes = "获取所有会员等级信息")
     @RequestMapping(value = "/getLevelList", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = LevelListResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -279,12 +275,12 @@ public class userController {
     })
     @RequestMapping(value = "/updateLevel", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse updateLevel(@RequestParam(name = "name") String name,@RequestParam(name = "discountedRatio") String discountedRatio) throws NotExistException {
-        return userBlService.updateLevel(name,Double.parseDouble(discountedRatio));
+    public ResponseEntity<Response> updateLevel(@RequestParam(name = "name") String name,@RequestParam(name = "discountedRatio") String discountedRatio) throws NotExistException {
+        return new ResponseEntity<>(userBlService.updateLevel(name,Double.parseDouble(discountedRatio)),HttpStatus.OK);
     }
 
     @ApiOperation(value = "更新会员等级信息", notes = "更新会员等级信息")
@@ -293,12 +289,12 @@ public class userController {
     })
     @RequestMapping(value = "/deleteLevel", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse deleteLevel(@RequestParam(name = "name") String name) throws NotExistException {
-        return userBlService.deleteLevel(name);
+    public ResponseEntity<Response> deleteLevel(@RequestParam(name = "name") String name) throws NotExistException {
+        return new ResponseEntity<>(userBlService.deleteLevel(name),HttpStatus.OK);
     }
 
 
@@ -308,7 +304,7 @@ public class userController {
     })
     @RequestMapping(value = "/getOpenIdAndSessionKey", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = OpenIdAndSessionKeyResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -325,7 +321,7 @@ public class userController {
     })
     @RequestMapping(value = "/loginMyUser", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = LoginResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -346,7 +342,7 @@ public class userController {
     })
     @RequestMapping(value = "/getWxQrCode", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = QrCodeResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -360,7 +356,7 @@ public class userController {
     })
     @RequestMapping(value = "/getMyUser", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = UserResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -377,7 +373,7 @@ public class userController {
     })
     @RequestMapping(value = "/updateMyProfile", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -426,7 +422,7 @@ public class userController {
     })
     @RequestMapping(value = "/updateMyProfileWithoutFile", method = RequestMethod.GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -445,7 +441,7 @@ public class userController {
     })
     @RequestMapping(value="/addAddress",method=RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -460,7 +456,7 @@ public class userController {
     })
     @RequestMapping(value="/deleteAddress",method=RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -480,7 +476,7 @@ public class userController {
     })
     @RequestMapping(value="/updateAddress",method=RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody

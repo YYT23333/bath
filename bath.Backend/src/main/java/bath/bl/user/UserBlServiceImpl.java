@@ -4,7 +4,6 @@ import bath.blservice.user.UserBlService;
 import bath.dataservice.user.LevelDataService;
 import bath.dataservice.user.UserDataService;
 import bath.entity.address.Address;
-import bath.entity.coupon.Coupon;
 import bath.entity.groupon.Groupon;
 import bath.entity.order.Order;
 import bath.entity.user.Level;
@@ -47,35 +46,31 @@ public class UserBlServiceImpl implements UserBlService {
 
 	@Override
 	public InfoResponse addUser(String openid, String username, String avatarUrl, String phone) throws NotExistException {
-		userDataService.addUser(new User(openid, username, avatarUrl, phone));
+		userDataService.add(new User(openid, username, avatarUrl, phone));
 		return new InfoResponse();
 	}
 
 	@Override
 	public UserResponse getUser(String openid) throws NotExistException {
-		return new UserResponse(new UserItem(userDataService.getUserByOpenid(openid)));
+		return new UserResponse(userDataService.findByOpenid(openid));
 	}
 
 	@Override
 	public UserListResponse getUserList() {
-		List<User> userList = userDataService.getAllUsers();
-		List<UserItem> userItemList = new ArrayList<>();
-		for(User user:userList) {
-			userItemList.add(new UserItem(user));
-		}
-		return new UserListResponse(userItemList);
+		List<User> userList = userDataService.getAll();
+		return new UserListResponse(userList);
 	}
 
 	@Override
-	public InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelname, int integration, double balance, List<Order> orders, List<Groupon> carts, List<Address> addresses, List<Coupon> coupons) throws NotExistException {
-		User user = userDataService.getUserByOpenid(openid);
-		userDataService.updateUserByOpenid(openid,username,role,avatarUrl,phone,levelname,integration,balance,orders,carts,addresses,coupons);
+	public InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName, /*int integration, double balance, */List<Order> orders, List<Groupon> carts, List<Address> addresses/*, List<Coupon> coupons*/) throws NotExistException {
+		User user=new User(openid,username,role,avatarUrl,phone,levelName,orders,carts,addresses);
+		userDataService.update(user);
 		return new InfoResponse();
 	}
 
 	@Override
 	public InfoResponse deleteUser(String openid) throws NotExistException {
-		userDataService.deleteUserByOpenid(openid);
+		userDataService.deleteUByOpenid(openid);
 		return new InfoResponse();
 	}
 
@@ -87,29 +82,26 @@ public class UserBlServiceImpl implements UserBlService {
 
 	@Override
 	public InfoResponse addLevel(String name, double discountedRatio) {
-		levelDataService.addLevel(new Level(name,discountedRatio));
+		levelDataService.add(new Level(name,discountedRatio));
 		return new InfoResponse();
 	}
 
 	@Override
 	public LevelListResponse getLevelList() {
-		List<Level> levels = levelDataService.getAllLevels();
-		List<LevelItem> levelItems = new ArrayList<>();
-		for(Level level:levels) {
-			levelItems.add(new LevelItem(level));
-		}
-		return new LevelListResponse(levelItems);
+		List<Level> levels = levelDataService.getAll();
+		return new LevelListResponse(levels);
 	}
 
 	@Override
 	public InfoResponse updateLevel(String name, double discountedRatio) throws NotExistException {
-		levelDataService.updateLevelByName(name, discountedRatio);
+		Level level=new Level(name,discountedRatio);
+		levelDataService.update(level);
 		return new InfoResponse();
 	}
 
 	@Override
 	public InfoResponse deleteLevel(String name) throws NotExistException {
-		levelDataService.deleteLevelByName(name);
+		levelDataService.deleteByName(name);
 		return new InfoResponse();
 	}
 
@@ -119,7 +111,7 @@ public class UserBlServiceImpl implements UserBlService {
 	public UserLoginResponse loginMyUser(String openid, String username, String faceWxUrl) throws NotExistException {
 		User user = null;
 		try {
-			user = userDataService.getUserByOpenid(openid);
+			user = userDataService.findByOpenid(openid);
 		} catch (NotExistException exception) {
 			//设置初始头像为微信头像
 			String faceLocalUrl = "record/user/head/"+UUID.randomUUID();
@@ -142,7 +134,7 @@ public class UserBlServiceImpl implements UserBlService {
 				e.printStackTrace();
 			}
 			user = new User(openid,username,faceLocalUrl);
-			userDataService.addUser(user);
+			userDataService.add(user);
 		}
 
 
@@ -172,7 +164,7 @@ public class UserBlServiceImpl implements UserBlService {
 			String openid=(String) JSONObject.fromObject(response.getBody()).get("openid");
 //            User user=null;
 //			try {
-//				user = userDataService.getUserByOpenid(openid);
+//				user = userDataService.findByOpenid(openid);
 //			} catch (NotExistException e) {
 //				e.printStackTrace();
 //			}
@@ -270,34 +262,37 @@ public class UserBlServiceImpl implements UserBlService {
 
 	@Override
 	public UserResponse getMyUser(String openid) throws NotExistException {
-		return new UserResponse(new UserItem(userDataService.getUserByOpenid(openid)));
+		return new UserResponse(userDataService.findByOpenid(openid));
 	}
 
 	@Override
 	public InfoResponse updateMyProfile(String openid, String username, String avatarUrl, String phone)throws NotExistException {
-		User user = userDataService.getUserByOpenid(openid);
-		userDataService.updateUserByOpenid(openid, username,user.getRole(), avatarUrl, phone,user.getLevel(),user.getIntegration(),user.getBalance(),user.getOrders(),user.getCarts(), user.getAddresses(),user.getCoupons());
+		User user = userDataService.findByOpenid(openid);
+		user.setUsername(username);
+		user.setAvatarUrl(avatarUrl);
+		user.setPhone(phone);
+		userDataService.update(user);
 		return new InfoResponse();
 	}
 
 
 	@Override
 	public InfoResponse addAddress(String openid,String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException{
-		User user=userDataService.getUserByOpenid(openid);
+		User user=userDataService.findByOpenid(openid);
 		Address address=new Address(receiver,phone,zone,detailAddress,postcode);
 		List<Address> addresses=user.getAddresses();
 		if(addresses==null || addresses.size()<1)
 			addresses=new ArrayList<>();
 		addresses.add(address);
 		user.setAddresses(addresses);
-		userDataService.saveUser(user);
+		userDataService.update(user);
 		//addressDataService.addAddress(address);
 		return new InfoResponse();
 	}
 
 	@Override
 	public InfoResponse deleteAddress(String openid, int addressId) throws NotExistException {
-		User user=userDataService.getUserByOpenid(openid);
+		User user=userDataService.findByOpenid(openid);
 		List<Address> addresses=user.getAddresses();
 		if(addresses==null || addresses.size()<1)
 			return new InfoResponse("Fail");
@@ -308,13 +303,13 @@ public class UserBlServiceImpl implements UserBlService {
 			}
 		}
 		user.setAddresses(addresses);
-		userDataService.saveUser(user);
+		userDataService.update(user);
 		return new InfoResponse();
 	}
 
 	@Override
 	public InfoResponse updateAddress(String openid, int addressId, String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException {
-		User user=userDataService.getUserByOpenid(openid);
+		User user=userDataService.findByOpenid(openid);
 		List<Address> addresses=user.getAddresses();
 		if(addresses==null || addresses.size()<1)
 			throw new NotExistException("地址id",addressId+"");
@@ -335,7 +330,7 @@ public class UserBlServiceImpl implements UserBlService {
 		if(isExist==false)
 			throw new NotExistException("地址id",addressId+"");
 		user.setAddresses(addresses);
-		userDataService.saveUser(user);
+		userDataService.update(user);
 		return new InfoResponse();
 	}
 

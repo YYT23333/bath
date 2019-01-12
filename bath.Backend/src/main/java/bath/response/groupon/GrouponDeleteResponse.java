@@ -3,6 +3,7 @@ package bath.response.groupon;
 import bath.response.Response;
 
 public class GrouponDeleteResponse extends Response {
+
     private String id;
 
     public GrouponDeleteResponse() {

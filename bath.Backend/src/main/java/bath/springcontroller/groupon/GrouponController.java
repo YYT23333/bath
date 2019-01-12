@@ -4,7 +4,7 @@ import bath.blservice.groupon.GrouponBlService;
 import bath.exception.NotExistException;
 import bath.response.Response;
 import bath.response.WrongResponse;
-import bath.response.event.EventLoadResponse;
+import bath.response.groupon.*;
 import bath.util.FormatDateTime;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class GrouponController {
             @ApiImplicitParam(name="amount",value="数量",required = true,dataType = "int")
     })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponAddResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -60,7 +60,7 @@ public class GrouponController {
             @ApiImplicitParam(name="amount",value="数量",required = true,dataType = "int")
     })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponUpdateResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -74,7 +74,7 @@ public class GrouponController {
             @ApiImplicitParam(name = "id", value = "团购id", required = true, dataType = "String")
     })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponDeleteResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -85,7 +85,7 @@ public class GrouponController {
     @ApiOperation(value="获取所有团购",notes="获取所有团购")
     @RequestMapping(value="grouponList",method = GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponListResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -99,7 +99,7 @@ public class GrouponController {
             @ApiImplicitParam(name = "id", value = "团购id", required = true, dataType = "String")
     })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -110,7 +110,7 @@ public class GrouponController {
     @ApiOperation(value="获取正在销售的团购",notes="获取正在销售的团购")
     @RequestMapping(value="groupon/available",method = GET)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponListResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -124,7 +124,7 @@ public class GrouponController {
             @ApiImplicitParam(name = "id", value = "团购id", required = true, dataType = "String")
     })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponUpdateResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
@@ -138,7 +138,7 @@ public class GrouponController {
             @ApiImplicitParam(name = "id", value = "团购id", required = true, dataType = "String")
     })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = EventLoadResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = GrouponUpdateResponse.class),
             @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody

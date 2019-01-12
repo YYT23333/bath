@@ -3,6 +3,7 @@ package bath.response.order;
 import bath.response.Response;
 
 public class OrderDeleteResponse extends Response {
+
     private String info;
 
     public OrderDeleteResponse() {

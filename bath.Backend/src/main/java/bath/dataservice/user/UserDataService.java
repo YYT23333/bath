@@ -11,15 +11,14 @@ import java.util.List;
 
 public interface UserDataService {
 
-	void saveUser(User user);
+	void add(User user);
 
-	void addUser(User user);
+	User findByOpenid(String openid) throws NotExistException;
 
-	User getUserByOpenid(String openid) throws NotExistException;
+	List<User> getAll();
 
-	List<User> getAllUsers();
+	void update(User user) throws NotExistException;
 
-	void updateUserByOpenid(String openid, String username, Role role, String avatarUrl, String phone, String level, int integration, double balance, List<Order> orders, List<Groupon> carts, List<Address> addresses, List<Coupon> coupons) throws NotExistException;
+	void deleteUByOpenid(String openid) throws NotExistException;
 
-	void deleteUserByOpenid(String openid) throws NotExistException;
 }

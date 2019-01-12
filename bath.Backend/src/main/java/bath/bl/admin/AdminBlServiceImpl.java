@@ -14,6 +14,7 @@ import bath.response.admin.AdminResponse;
 import bath.security.jwt.JwtService;
 import bath.security.jwt.JwtUser;
 import bath.security.jwt.JwtUserDetailsService;
+import bath.util.FormatDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class AdminBlServiceImpl implements AdminBlService {
 
 	@Override
 	public BoolResponse isAdminUsernameExistent(String username) {
-		return new BoolResponse(adminDataService.isAdminExistent(username), "ok");
+		return new BoolResponse(adminDataService.isExistent(username), "ok");
 	}
 
 	@Override
@@ -45,8 +46,8 @@ public class AdminBlServiceImpl implements AdminBlService {
 			JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(username);
 			String token="";
 			token = jwtService.generateToken(jwtUser, EXPIRATION);
-			if(adminDataService.isAdminExistent(username)
-					&& adminDataService.getAdminByUsername(username).getPassword().equals(password)){
+			if(adminDataService.isExistent(username)
+					&& adminDataService.findByUsername(username).getPassword().equals(password)){
 				return token;
 			}
 
@@ -58,8 +59,8 @@ public class AdminBlServiceImpl implements AdminBlService {
 
 	@Override
 	public InfoResponse addAdmin(String username, String password, String limits, String date, String face) throws DuplicateUsernameException {
-		if (!adminDataService.isAdminExistent(username)) {
-			adminDataService.addAdmin(new Admin(username, password, limits, date, face));
+		if (!adminDataService.isExistent(username)) {
+			adminDataService.add(new Admin(username, password, limits, date, face));
 			return new InfoResponse();
 		} else {
 			throw new DuplicateUsernameException(username);
@@ -68,17 +69,17 @@ public class AdminBlServiceImpl implements AdminBlService {
 
 	@Override
 	public AdminResponse getAdmin(String id) throws NotExistException {
-		return new AdminResponse(new AdminItem(adminDataService.getAdminById(id)));
+		return new AdminResponse(new AdminItem(adminDataService.findById(id)));
 	}
 
 	@Override
 	public AdminResponse getAdminByUsername(String username) throws NotExistException {
-		return new AdminResponse(new AdminItem(adminDataService.getAdminByUsername(username)));
+		return new AdminResponse(new AdminItem(adminDataService.findByUsername(username)));
 	}
 
 	@Override
 	public AdminListResponse getAdminList() {
-		List<Admin> adminList = adminDataService.getAllAdmins();
+		List<Admin> adminList = adminDataService.getAll();
 		List<AdminItem> adminItemList = new ArrayList<>();
 		for(Admin admin:adminList) {
 			adminItemList.add(new AdminItem(admin));
@@ -88,13 +89,15 @@ public class AdminBlServiceImpl implements AdminBlService {
 
 	@Override
 	public InfoResponse updateAdmin(String id, String username, String password, String limits, String date, String face) throws NotExistException {
-		adminDataService.updateAdminById(id, username, password, limits, date, face);
+		Admin admin=new Admin(username,password,limits,date,face);
+		admin.setId(id);
+		adminDataService.update(admin);
 		return new InfoResponse();
 	}
 
 	@Override
 	public BoolResponse deleteAdmin(String id) throws NotExistException {
-		adminDataService.deleteAdminById(id);
+		adminDataService.deleteById(id);
 		return new BoolResponse(true, "");
 	}
 }

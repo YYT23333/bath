@@ -20,17 +20,17 @@ public class AdminDataServiceImpl implements AdminDataService {
 	}
 
 	@Override
-	public boolean isAdminExistent(String username) {
-		return !adminDao.findAdminByUsername(username).isEmpty();
+	public boolean isExistent(String username) {
+		return !adminDao.findByUsername(username).isEmpty();
 	}
 
 	@Override
-	public void addAdmin(Admin admin) {
+	public void add(Admin admin) {
 		adminDao.save(admin);
 	}
 
 	@Override
-	public Admin getAdminById(String id) throws NotExistException {
+	public Admin findById(String id) throws NotExistException {
 		Optional<Admin> optionalAdmin = adminDao.findById(id);
 		if(optionalAdmin.isPresent()) {
 			return optionalAdmin.get();
@@ -40,37 +40,32 @@ public class AdminDataServiceImpl implements AdminDataService {
 	}
 
 	@Override
-	public Admin getAdminByUsername(String username) throws NotExistException {
-		if (!adminDao.findAdminByUsername(username).isEmpty()) {
-			return adminDao.findAdminByUsername(username).get(0);
+	public Admin findByUsername(String username) throws NotExistException {
+		if (!adminDao.findByUsername(username).isEmpty()) {
+			return adminDao.findByUsername(username).get(0);
 		} else {
 			throw new NotExistException("Admin username", username);
 		}
 	}
 
 	@Override
-	public List<Admin> getAllAdmins() {
+	public List<Admin> getAll() {
 		return adminDao.findAll();
 	}
 
 	@Override
-	public void updateAdminById(String id, String username, String password, String limits, String date, String face) throws NotExistException {
-		Optional<Admin> optionalAdmin = adminDao.findById(id);
-		if(optionalAdmin.isPresent()) {
-			Admin admin = optionalAdmin.get();
-			admin.setUsername(username);
-			admin.setPassword(password);
-			admin.setLimits(limits);
-			admin.setDate(date);
-			admin.setAvatarUrl(face);
+	public void update(Admin admin) throws NotExistException {
+		if(adminDao.findById(admin.getId()).isPresent()){
 			adminDao.save(admin);
-		} else {
-			throw new NotExistException("Admin ID", id);
+		}else{
+			throw new NotExistException("Admin ID",admin.getId());
 		}
+
 	}
 
+
 	@Override
-	public void deleteAdminById(String id) throws NotExistException {
+	public void deleteById(String id) throws NotExistException {
 		Optional<Admin> optionalAdmin = adminDao.findById(id);
 		if (optionalAdmin.isPresent()) {
 			Admin admin = optionalAdmin.get();
