@@ -1,8 +1,11 @@
 package bath.bl.order;
 
 import bath.blservice.order.OrderBlService;
+import bath.dataservice.coupon.CouponDataService;
+import bath.dataservice.groupon.GrouponDataService;
 import bath.dataservice.order.OrderDataService;
 import bath.dataservice.user.UserDataService;
+import bath.entity.coupon.Coupon;
 import bath.entity.order.Order;
 import bath.entity.order.OrderGrouponItem;
 import bath.entity.user.User;
@@ -24,10 +27,14 @@ import java.util.*;
 public class OrderBlServiceImpl implements OrderBlService {
     private final OrderDataService orderDataService;
     private final UserDataService userDataService;
+    private final CouponDataService couponDataService;
+    private final GrouponDataService grouponDataService;
     @Autowired
-    public OrderBlServiceImpl(OrderDataService orderDataService, UserDataService userDataService){
+    public OrderBlServiceImpl(OrderDataService orderDataService, UserDataService userDataService,CouponDataService couponDataService,GrouponDataService grouponDataService){
         this.orderDataService=orderDataService;
         this.userDataService=userDataService;
+        this.couponDataService=couponDataService;
+        this.grouponDataService=grouponDataService;
     }
 
     @Override
@@ -171,7 +178,13 @@ public class OrderBlServiceImpl implements OrderBlService {
                                 order.setOrderState("finished");
                                 order.setFinalTimeStamp(String.valueOf(System.currentTimeMillis()));
                                 orderDataService.update(order);
-                                //todo 应该有一点操作吧？？？
+                                User user=order.getUser();
+                                for(OrderGrouponItem temp:order.getOrderItems()){
+                                    for(int i=1;i<=temp.getAmount();i++){
+                                        Coupon coupon=new Coupon(grouponDataService.findById(temp.getGrouponId()),user);
+                                        couponDataService.add(coupon);
+                                    }
+                                }
 
                             } else {
                                 System.err.println("订单状态已更新为finished！");

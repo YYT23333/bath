@@ -1,20 +1,25 @@
 package bath.springcontroller.user;
 
+import bath.blservice.address.AddressBlService;
+import bath.blservice.cart.CartBlService;
+import bath.blservice.coupon.CouponBlService;
 import bath.blservice.user.UserBlService;
 import bath.entity.address.Address;
+import bath.entity.cart.Cart;
 import bath.entity.coupon.Coupon;
-import bath.entity.groupon.Groupon;
 import bath.entity.order.Order;
 import bath.exception.CannotGetOpenIdAndSessionKeyException;
 import bath.exception.NotExistException;
 import bath.publicdatas.account.Role;
 import bath.response.*;
 import bath.response.account.OpenIdAndSessionKeyResponse;
+import bath.response.coupon.CouponListResponse;
 import bath.response.user.LevelListResponse;
 import bath.response.user.QrCodeResponse;
 import bath.response.user.UserListResponse;
 import bath.response.user.UserResponse;
 import io.swagger.annotations.*;
+import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +32,16 @@ import java.util.*;
 @RestController
 public class userController {
     private final UserBlService userBlService;
+    private final AddressBlService addressBlService;
+    private final CouponBlService couponBlService;
+    private final CartBlService cartBlService;
 
     @Autowired
-    public userController(UserBlService userBlService) {
+    public userController(UserBlService userBlService, AddressBlService addressBlService, CouponBlService couponBlService,CartBlService cartBlService) {
         this.userBlService = userBlService;
+        this.addressBlService=addressBlService;
+        this.couponBlService=couponBlService;
+        this.cartBlService=cartBlService;
     }
 
     private static String headPath = "";
@@ -39,7 +50,7 @@ public class userController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "face", value = "用户头像", required = true, dataType = "MultipartFile")
     })
-    @RequestMapping(value = "/uploadHead", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/uploadHead", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = BoolResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -89,7 +100,7 @@ public class userController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "phone", value = "用户手机", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/addUser", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/add/avatar", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -136,7 +147,7 @@ public class userController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "phone", value = "用户手机", required = true, dataType = "String"),
     })
-    @RequestMapping(path = "/addUserWithoutAvatar", method = RequestMethod.POST,produces = "application/json")
+    @RequestMapping(path = "/user/add", method = RequestMethod.POST,produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -146,7 +157,7 @@ public class userController {
         return new ResponseEntity<>(userBlService.addUser(openid,username,"",phone),HttpStatus.OK);
     }
     @ApiOperation(value = "获取用户列表", notes = "获取用户列表")
-    @RequestMapping(value = "/getUserList", method = RequestMethod.GET)
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = UserListResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -160,7 +171,7 @@ public class userController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "openid", value = "用户编号", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/getUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = UserResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -187,13 +198,13 @@ public class userController {
             @ApiImplicitParam(name="coupons",value="优惠券",required = true,dataType = "ArrayList")
 
     })
-    @RequestMapping(value = "/updateUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/update", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public ResponseEntity<Response> updateUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username,@RequestParam("role")String role,  @RequestParam(name = "avatarUrl") String avatarUrl,@RequestParam("phone")String phone, @RequestParam(name = "levelName") String levelName, @RequestParam(name = "integration") int integration, @RequestParam(name = "balance") double balance, @RequestParam(name = "orders") ArrayList<Order> orders, @RequestParam(name = "carts")ArrayList<Groupon> carts, @RequestParam(name = "addresses") ArrayList<Address> addresses, @RequestParam(name = "coupons") ArrayList<Coupon> coupons) throws NotExistException {
+    public ResponseEntity<Response> updateUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username, @RequestParam("role")String role, @RequestParam(name = "avatarUrl") String avatarUrl, @RequestParam("phone")String phone, @RequestParam(name = "levelName") String levelName, /*@RequestParam(name = "integration") int integration, @RequestParam(name = "balance") double balance,*/ @RequestParam(name = "orders") ArrayList<Order> orders, @RequestParam(name = "carts")ArrayList<Cart> carts, @RequestParam(name = "addresses") ArrayList<Address> addresses, @RequestParam(name = "coupons") ArrayList<Coupon> coupons) throws NotExistException {
         boolean is = true;
         File file = new File(headPath);
         String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
@@ -223,7 +234,7 @@ public class userController {
         if (file.exists() && file.isFile()) {
             file.delete();
         }
-        InfoResponse r = userBlService.updateUser(openid,username,new Role(role),avatarUrl,phone,levelName,/*integration,balance,*/orders,carts,addresses/*,coupons*/);
+        InfoResponse r = userBlService.updateUser(openid,username,new Role(role),avatarUrl,phone,levelName,/*integration,balance,*/orders,carts,addresses,coupons);
         headPath = "";
         return new ResponseEntity<>(r,HttpStatus.OK);
     }
@@ -232,7 +243,7 @@ public class userController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "openid", value = "用户编号", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/deleteUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/delete", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -247,7 +258,7 @@ public class userController {
             @ApiImplicitParam(name = "name", value = "名称", required = true, dataType = "String"),
             @ApiImplicitParam(name = "discountedRatio", value = "该会员级别的折扣率，价格是原价的discountedRatio倍", required = true, dataType = "String"),
     })
-    @RequestMapping(value = "/addLevel", method = RequestMethod.GET)
+    @RequestMapping(value = "/level/add", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -258,7 +269,7 @@ public class userController {
     }
 
     @ApiOperation(value = "获取所有会员等级信息", notes = "获取所有会员等级信息")
-    @RequestMapping(value = "/getLevelList", method = RequestMethod.GET)
+    @RequestMapping(value = "/levels", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = LevelListResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -273,7 +284,7 @@ public class userController {
             @ApiImplicitParam(name = "name", value = "名称", required = true, dataType = "String"),
             @ApiImplicitParam(name = "discountedRatio", value = "该会员级别的折扣率，价格是原价的discountedRatio倍", required = true, dataType = "String"),
     })
-    @RequestMapping(value = "/updateLevel", method = RequestMethod.GET)
+    @RequestMapping(value = "/level/update", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -283,11 +294,11 @@ public class userController {
         return new ResponseEntity<>(userBlService.updateLevel(name,Double.parseDouble(discountedRatio)),HttpStatus.OK);
     }
 
-    @ApiOperation(value = "更新会员等级信息", notes = "更新会员等级信息")
+    @ApiOperation(value = "删除会员等级", notes = "删除会员等级")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "name", value = "名称", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/deleteLevel", method = RequestMethod.GET)
+    @RequestMapping(value = "/level/delete", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -302,7 +313,7 @@ public class userController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jsCode", value = "微信小程序的jsCode", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/getOpenIdAndSessionKey", method = RequestMethod.GET)
+    @RequestMapping(value = "/OpenIdAndSessionKey", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = OpenIdAndSessionKeyResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -319,7 +330,7 @@ public class userController {
             @ApiImplicitParam(name = "username", value = "名称", required = true, dataType = "String"),
             @ApiImplicitParam(name = "faceWxUrl", value = "用户微信头像的URL", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/loginMyUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/login", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = LoginResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -340,7 +351,7 @@ public class userController {
             @ApiImplicitParam(name = "lineColorB", value = "当autoColor为false时有效，对应微信API的line_color中的b", required = true, dataType = "String"),
             @ApiImplicitParam(name = "isHyaline", value = "是否需要透明底色，对应微信API的is_hyaline", required = true, dataType = "boolean")
     })
-    @RequestMapping(value = "/getWxQrCode", method = RequestMethod.GET)
+    @RequestMapping(value = "/WxQrCode", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = QrCodeResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -354,7 +365,7 @@ public class userController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "openid", value = "编号", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/getMyUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/info", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = UserResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -371,7 +382,7 @@ public class userController {
             @ApiImplicitParam(name="avatarUrl",value="用户头像",required = true,dataType = "String"),
             @ApiImplicitParam(name = "phone", value = "用户手机", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/updateMyProfile", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/profile/update/avatar", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -420,7 +431,7 @@ public class userController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "phone", value = "用户手机", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/updateMyProfileWithoutFile", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/profile/update", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -439,48 +450,124 @@ public class userController {
             @ApiImplicitParam(name="detailAddress",value="详细地址",required = true,dataType = "String"),
             @ApiImplicitParam(name="postcode",value="邮政编码",required = true,dataType = "String")
     })
-    @RequestMapping(value="/addAddress",method=RequestMethod.POST)
+    @RequestMapping(value="/user/address/add",method=RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
     public ResponseEntity<Response> addAddress(@RequestParam(name="openid")String openid,@RequestParam(name="receiver")String receiver,@RequestParam(name="phone")String phone,@RequestParam(name="zone")String zone,@RequestParam(name="detailAddress")String detailAddress,@RequestParam(name="postcode")String postcode)throws NotExistException{
-        return new ResponseEntity<>(userBlService.addAddress(openid,receiver,phone,zone,detailAddress,postcode),HttpStatus.OK);
+        return new ResponseEntity<>(addressBlService.addAddress(openid,receiver,phone,zone,detailAddress,postcode),HttpStatus.OK);
     }
 
     @ApiOperation(value="用户删除地址",notes="用户删除地址")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="openid",value="用户编号",required = true,dataType = "String"),
-            @ApiImplicitParam(name="addressId",value="地址编号",required = true,dataType = "int"),
+            @ApiImplicitParam(name="id",value="地址编号",required = true,dataType = "String"),
     })
-    @RequestMapping(value="/deleteAddress",method=RequestMethod.POST)
+    @RequestMapping(value="/user/address/delete",method=RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public ResponseEntity<Response> deleteAddress(@RequestParam(name="openid")String openid,@RequestParam(name="addressId")int addressId)throws NotExistException{
-        return new ResponseEntity<>(userBlService.deleteAddress(openid,addressId),HttpStatus.OK);
+    public ResponseEntity<Response> deleteAddress(@RequestParam(name="id")String id)throws NotExistException{
+        return new ResponseEntity<>(addressBlService.deleteAddress(id),HttpStatus.OK);
     }
 
     @ApiOperation(value="用户更新地址",notes="用户更新地址")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="openid",value="用户编号",required = true,dataType = "String"),
-            @ApiImplicitParam(name="addressId",value="地址编号",required = true,dataType = "int"),
+            @ApiImplicitParam(name="id",value="地址编号",required = true,dataType = "String"),
             @ApiImplicitParam(name="receiver",value="收件人姓名",required = true,dataType = "String"),
             @ApiImplicitParam(name="phone",value="收件人电话",required = true,dataType = "String"),
             @ApiImplicitParam(name="zone",value="地区信息",required = true,dataType = "String"),
             @ApiImplicitParam(name="detailAddress",value="详细地址",required = true,dataType = "String"),
             @ApiImplicitParam(name="postcode",value="邮政编码",required = true,dataType = "String")
     })
-    @RequestMapping(value="/updateAddress",method=RequestMethod.POST)
+    @RequestMapping(value="/user/address/update",method=RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public ResponseEntity<Response> updateAddress(@RequestParam(name="openid")String openid,@RequestParam(name="addressId")int addressId,@RequestParam(name="receiver")String receiver,@RequestParam(name="phone")String phone,@RequestParam(name="zone")String zone,@RequestParam(name="detailAddress")String detailAddress,@RequestParam(name="postcode")String postcode)throws NotExistException{
-        return new ResponseEntity<>(userBlService.updateAddress(openid,addressId,receiver,phone,zone,detailAddress,postcode),HttpStatus.OK);
+    public ResponseEntity<Response> updateAddress(@RequestParam(name="id")String id,@RequestParam(name="receiver")String receiver,@RequestParam(name="phone")String phone,@RequestParam(name="zone")String zone,@RequestParam(name="detailAddress")String detailAddress,@RequestParam(name="postcode")String postcode)throws NotExistException{
+        return new ResponseEntity<>(addressBlService.updateAddress(id,receiver,phone,zone,detailAddress,postcode),HttpStatus.OK);
     }
+    @ApiOperation(value="用户获取地址列表",notes="用户获取地址列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openid",value="用户编号",required = true,dataType = "String")
+    })
+    @RequestMapping(value="/user/addresses",method=RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = CouponListResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> getMyAddress(@RequestParam(name="openid")String openid) throws NotExistException {
+        return new ResponseEntity<>(userBlService.getMyAddress(openid),HttpStatus.OK);
+    }
+
+    @ApiOperation(value="通过id获取地址",notes="通过id获取地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="地址编号",required = true,dataType = "String")
+    })
+    @RequestMapping(value="/user/address",method=RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = CouponListResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> findAddressById(@RequestParam(name="id")String id) throws NotExistException {
+        return new ResponseEntity<>(addressBlService.findAddressById(id),HttpStatus.OK);
+    }
+
+
+    @ApiOperation(value="用户获取优惠码列表",notes="用户获取优惠码列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openid",value="用户编号",required = true,dataType = "String")
+    })
+    @RequestMapping(value="/user/coupons",method=RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = CouponListResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> getMyCoupons(@RequestParam(name="openid")String openid) throws NotExistException {
+        return new ResponseEntity<>(userBlService.getMyCoupon(openid),HttpStatus.OK);
+    }
+
+    @ApiOperation(value="通过id获取优惠码",notes="通过id获取优惠码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="优惠码编号",required = true,dataType = "String")
+    })
+    @RequestMapping(value="/user/coupon",method=RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = CouponListResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> findCouponById(@RequestParam(name="id")String id) throws NotExistException {
+        return new ResponseEntity<>(couponBlService.findCouponById(id),HttpStatus.OK);
+    }
+
+    @ApiOperation(value="用户获取购物车列表",notes="用户获取购物车列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="openid",value="用户编号",required = true,dataType = "String")
+    })
+    @RequestMapping(value="/user/cart",method=RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = CouponListResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> getMyCart(@RequestParam(name="openid")String openid) throws NotExistException {
+        return new ResponseEntity<>(userBlService.getMyCart(openid),HttpStatus.OK);
+    }
+
+//    @RequestMapping(value="/user/cart/add",method = RequestMethod.POST)
+//    @ResponseBody
+//    public ResponseEntity<Response> addCartItem(@RequestParam(name="openid")){}
+
+
+
+
 }

@@ -1,44 +1,24 @@
-package bath.entity.address;
+package bath.response.address;
 
-import bath.entity.user.User;
+import bath.entity.address.Address;
 
-import javax.persistence.*;
-
-@Entity
-@Table
-public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class AddressItem {
     private String id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @Column(name="receiver")
     private String receiver;//收货人姓名
-
-    @Column(name="phone")
     private String phone;//收货人电话
-
-    @Column(name="zone")
     private String zone;//地区信息
-
-    @Column(name="detailAddress")
     private String detailAddress;//详细地址
-
-    @Column(name="postcode")
     private String postcode;//邮政编码
 
-    public Address(){}
-
-    public Address(User user,String receiver,String phone,String zone,String detailAddress,String postcode){
-        this.user=user;
-        this.receiver=receiver;
-        this.phone=phone;
-        this.zone=zone;
-        this.detailAddress=detailAddress;
-        this.postcode=postcode;
+    public AddressItem() {
+    }
+    public AddressItem(Address address){
+        this.id=address.getId();
+        this.receiver=address.getReceiver();
+        this.phone=address.getPhone();
+        this.zone=address.getZone();
+        this.detailAddress=address.getDetailAddress();
+        this.phone=address.getPostcode();
     }
 
     public String getId() {
@@ -47,14 +27,6 @@ public class Address {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getReceiver() {
@@ -96,5 +68,5 @@ public class Address {
     public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
-
 }
+

@@ -4,7 +4,8 @@ import bath.blservice.user.UserBlService;
 import bath.dataservice.user.LevelDataService;
 import bath.dataservice.user.UserDataService;
 import bath.entity.address.Address;
-import bath.entity.groupon.Groupon;
+import bath.entity.cart.Cart;
+import bath.entity.coupon.Coupon;
 import bath.entity.order.Order;
 import bath.entity.user.Level;
 import bath.entity.user.User;
@@ -13,6 +14,9 @@ import bath.exception.NotExistException;
 import bath.publicdatas.account.Role;
 import bath.response.InfoResponse;
 import bath.response.account.OpenIdAndSessionKeyResponse;
+import bath.response.address.AddressListResponse;
+import bath.response.cart.CartResponse;
+import bath.response.coupon.CouponListResponse;
 import bath.response.user.*;
 import bath.security.jwt.JwtService;
 import bath.security.jwt.JwtUserDetailsService;
@@ -62,8 +66,8 @@ public class UserBlServiceImpl implements UserBlService {
 	}
 
 	@Override
-	public InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName, /*int integration, double balance, */List<Order> orders, List<Groupon> carts, List<Address> addresses/*, List<Coupon> coupons*/) throws NotExistException {
-		User user=new User(openid,username,role,avatarUrl,phone,levelName,orders,carts,addresses);
+	public InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName, /*int integration, double balance, */List<Order> orders, List<Cart> carts, List<Address> addresses, List<Coupon> coupons) throws NotExistException {
+		User user=new User(openid,username,role,avatarUrl,phone,levelName,orders,carts,addresses,coupons);
 		userDataService.update(user);
 		return new InfoResponse();
 	}
@@ -275,63 +279,22 @@ public class UserBlServiceImpl implements UserBlService {
 		return new InfoResponse();
 	}
 
-
 	@Override
-	public InfoResponse addAddress(String openid,String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException{
+	public AddressListResponse getMyAddress(String openid) throws NotExistException {
 		User user=userDataService.findByOpenid(openid);
-		Address address=new Address(receiver,phone,zone,detailAddress,postcode);
-		List<Address> addresses=user.getAddresses();
-		if(addresses==null || addresses.size()<1)
-			addresses=new ArrayList<>();
-		addresses.add(address);
-		user.setAddresses(addresses);
-		userDataService.update(user);
-		//addressDataService.addAddress(address);
-		return new InfoResponse();
+		return new AddressListResponse(user.getAddresses());
 	}
 
 	@Override
-	public InfoResponse deleteAddress(String openid, int addressId) throws NotExistException {
+	public CouponListResponse getMyCoupon(String openid) throws NotExistException {
 		User user=userDataService.findByOpenid(openid);
-		List<Address> addresses=user.getAddresses();
-		if(addresses==null || addresses.size()<1)
-			return new InfoResponse("Fail");
-		for(Address temp:addresses){
-			if(temp.getId()==addressId){
-				addresses.remove(temp);
-				break;
-			}
-		}
-		user.setAddresses(addresses);
-		userDataService.update(user);
-		return new InfoResponse();
+		return new CouponListResponse(user.getCoupons());
 	}
 
 	@Override
-	public InfoResponse updateAddress(String openid, int addressId, String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException {
+	public CartResponse getMyCart(String openid) throws NotExistException {
 		User user=userDataService.findByOpenid(openid);
-		List<Address> addresses=user.getAddresses();
-		if(addresses==null || addresses.size()<1)
-			throw new NotExistException("地址id",addressId+"");
-		boolean isExist=false;
-		for(Address temp:addresses){
-			if(temp.getId()==addressId){
-				isExist=true;
-				addresses.remove(temp);
-				temp.setReceiver(receiver);
-				temp.setDetailAddress(detailAddress);
-				temp.setPhone(phone);
-				temp.setPostcode(postcode);
-				temp.setZone(zone);
-				addresses.add(temp);
-				break;
-			}
-		}
-		if(isExist==false)
-			throw new NotExistException("地址id",addressId+"");
-		user.setAddresses(addresses);
-		userDataService.update(user);
-		return new InfoResponse();
+		return new CartResponse(user.getCart());
 	}
 
 

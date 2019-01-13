@@ -1,8 +1,8 @@
 package bath.entity.user;
 
 import bath.entity.address.Address;
+import bath.entity.cart.Cart;
 import bath.entity.coupon.Coupon;
-import bath.entity.groupon.Groupon;
 import bath.entity.order.Order;
 import bath.publicdatas.account.Role;
 
@@ -33,11 +33,11 @@ public class User {
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Order> orders;//订单
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<Groupon> carts;//购物车
+    private List<Cart> cart;//购物车
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> addresses;//地址
-//    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-//    private List<Coupon> coupons;//优惠券
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<Coupon> coupons;//优惠券
 
     public User() {
     }
@@ -52,9 +52,9 @@ public class User {
         //this.integration = 0;
         //this.balance = 0;
         this.orders = new ArrayList<>();
-        this.carts = new ArrayList<>();
+        this.cart = new ArrayList<>();
         this.addresses = new ArrayList<>();
-        //this.coupons = new ArrayList<>();
+        this.coupons = new ArrayList<>();
 
     }
 
@@ -68,13 +68,13 @@ public class User {
         //this.integration = 0;
         //this.balance = 0;
         this.orders = new ArrayList<>();
-        this.carts = new ArrayList<>();
+        this.cart = new ArrayList<>();
         this.addresses = new ArrayList<>();
-        //this.coupons = new ArrayList<>();
+        this.coupons = new ArrayList<>();
 
     }
 
-    public User(String openid, String username, Role role, String avatarUrl, String phone, String level, List<Order> orders, List<Groupon> carts, List<Address> addresses) {
+    public User(String openid, String username, Role role, String avatarUrl, String phone, String level, List<Order> orders, List<Cart> cart, List<Address> addresses,List<Coupon> coupons) {
         this.openid = openid;
         this.username = username;
         this.role = role;
@@ -82,8 +82,9 @@ public class User {
         this.phone = phone;
         this.level = level;
         this.orders = orders;
-        this.carts = carts;
+        this.cart = cart;
         this.addresses = addresses;
+        this.coupons=coupons;
     }
 
     public String getOpenid() {
@@ -148,12 +149,12 @@ public class User {
         this.orders = orders;
     }
 
-    public List<Groupon> getCarts() {
-        return carts;
+    public List<Cart> getCart() {
+        return cart;
     }
 
-    public void setCarts(List<Groupon> carts) {
-        this.carts = carts;
+    public void setCart(List<Cart> cart) {
+        this.cart = cart;
     }
 
     public List<Address> getAddresses() {
@@ -164,13 +165,13 @@ public class User {
         this.addresses = addresses;
     }
 
-//    public List<Coupon> getCoupons() {
-//        return coupons;
-//    }
-//
-//    public void setCoupons(List<Coupon> coupons) {
-//        this.coupons = coupons;
-//    }
+    public List<Coupon> getCoupons() {
+        return coupons;
+    }
+
+    public void setCoupons(List<Coupon> coupons) {
+        this.coupons = coupons;
+    }
 
     public Role getRole() {
         return role;

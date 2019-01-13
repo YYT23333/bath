@@ -1,7 +1,6 @@
 package bath.response.user;
 
 import bath.entity.address.Address;
-import bath.entity.coupon.Coupon;
 import bath.entity.groupon.Groupon;
 import bath.entity.user.User;
 import bath.publicdatas.account.Role;
@@ -19,7 +18,7 @@ public class UserItem {
 	private List<Groupon> orders;
 	private List<Groupon> carts;
 	private List<Address> addresses;
-//	private List<Coupon> coupons;
+	private List<Cart> coupons;
 
 	public UserItem(User user){
 		this.openid=user.getOpenid();
@@ -30,8 +29,8 @@ public class UserItem {
 		this.levelName=user.getLevel();
 //		this.integration=user.getIntegration();
 //		this.balance=user.getBalance();
-		this.orders=user.getCarts();
-		this.carts=user.getCarts();
+		this.orders=user.getCart();
+		this.carts=user.getCart();
 		this.addresses=user.getAddresses();
 //		this.coupons=user.getCoupons();
 	}

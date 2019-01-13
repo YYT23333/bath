@@ -1,6 +1,7 @@
 package bath.blservice.user;
 
 import bath.entity.address.Address;
+import bath.entity.cart.Cart;
 import bath.entity.coupon.Coupon;
 import bath.entity.groupon.Groupon;
 import bath.entity.order.Order;
@@ -9,6 +10,9 @@ import bath.exception.NotExistException;
 import bath.publicdatas.account.Role;
 import bath.response.InfoResponse;
 import bath.response.account.OpenIdAndSessionKeyResponse;
+import bath.response.address.AddressListResponse;
+import bath.response.cart.CartResponse;
+import bath.response.coupon.CouponListResponse;
 import bath.response.user.*;
 
 import java.util.List;
@@ -58,7 +62,7 @@ public interface UserBlService {
 	'' * @param coupons
 	 * @return 是否成功
 	 */
-	InfoResponse updateUser(String openid,String username,Role role,String avatarUrl,String phone,String levelName,/*int integration,double balance,*/List<Order> orders,List<Groupon> carts,List<Address> addresses/*,List<Coupon> coupons*/)throws NotExistException;
+	InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName,/*int integration,double balance,*/List<Order> orders, List<Cart> carts, List<Address> addresses,List<Coupon> coupons)throws NotExistException;
 	/**
 	 * 根据微信openid删除用户(Admin)
 	 * @param openid 微信openid
@@ -145,36 +149,25 @@ public interface UserBlService {
 	 * @return 是否成功
 	 */
 	InfoResponse updateMyProfile(String openid, String username, String avatarUrl, String phone) throws NotExistException;
-	/**
-	 * 用户添加自己的收获地址
-	 * @param receiver
-	 * @param phone
-	 * @param zone
-	 * @param detailAddress
-	 * @param postcode
-	 * @return 是否成功
-	 */
-	InfoResponse addAddress(String openid,String receiver,String phone,String zone,String detailAddress,String postcode)throws NotExistException;
 
 	/**
-	 * 用户删除自己的地址
+	 * 用户获取自己的所有地址
 	 * @param openid
-	 * @param addressId
-	 * @return 是否成功
+	 * @return 地址列表
 	 */
-	InfoResponse deleteAddress(String openid,int addressId)throws NotExistException;
+	AddressListResponse getMyAddress(String openid)throws NotExistException;
 
 	/**
-	 * 用户更改自己的地址
+	 * 用户获取自己的优惠码列表
 	 * @param openid
-	 * @param addressId
-	 * @param receiver
-	 * @param phone
-	 * @param zone
-	 * @param detailAddress
-	 * @param postcode
-	 * @return 是否成功
+	 * @return 优惠码列表
 	 */
-	InfoResponse updateAddress(String openid,int addressId,String receiver,String phone,String zone,String detailAddress,String postcode)throws NotExistException;
+	CouponListResponse getMyCoupon(String openid)throws NotExistException;
 
+	/**
+	 * 用户获取自己的购物车列表
+	 * @param openid
+	 * @return 购物车列表
+	 */
+	CartResponse getMyCart(String openid) throws NotExistException;
 }

@@ -1,6 +1,10 @@
 package bath.entity.coupon;
 
+import bath.entity.groupon.Groupon;
+import bath.entity.user.User;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table
@@ -8,25 +12,40 @@ public class Coupon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private String id;
 
     @Column(name="isUsed")
     private boolean isUsed;
 
-    @Column(name="isValid")
-    private boolean isValid;
+    @Column(name="groupon")
+    private Groupon groupon;
 
-    @Column(name="minusPrice")
-    private double minusPrice;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(name="fullPrice")
-    private double fullPrice;
+    @Column(name="buyTime")
+    private Date buyTime;
 
-    public int getId() {
+    @Column(name="loseEffectTime")
+    private Date loseEffectiveTime;
+
+    @Column(name="useTime")
+    private Date useTime;
+
+    public Coupon(Groupon groupon, User user) {
+        this.groupon = groupon;
+        this.user = user;
+        this.isUsed=false;
+        this.buyTime=new Date();
+        this.loseEffectiveTime=groupon.getLoseEffectTime();
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -38,27 +57,43 @@ public class Coupon {
         isUsed = used;
     }
 
-    public boolean isValid() {
-        return isValid;
+    public Groupon getGroupon() {
+        return groupon;
     }
 
-    public void setValid(boolean valid) {
-        isValid = valid;
+    public void setGroupon(Groupon groupon) {
+        this.groupon = groupon;
     }
 
-    public double getMinusPrice() {
-        return minusPrice;
+    public Date getBuyTime() {
+        return buyTime;
     }
 
-    public void setMinusPrice(double minusPrice) {
-        this.minusPrice = minusPrice;
+    public void setBuyTime(Date buyTime) {
+        this.buyTime = buyTime;
     }
 
-    public double getFullPrice() {
-        return fullPrice;
+    public Date getLoseEffectiveTime() {
+        return loseEffectiveTime;
     }
 
-    public void setFullPrice(double fullPrice) {
-        this.fullPrice = fullPrice;
+    public void setLoseEffectiveTime(Date loseEffectiveTime) {
+        this.loseEffectiveTime = loseEffectiveTime;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Date getUseTime() {
+        return useTime;
+    }
+
+    public void setUseTime(Date useTime) {
+        this.useTime = useTime;
     }
 }
