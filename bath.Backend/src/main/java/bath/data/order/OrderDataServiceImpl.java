@@ -30,8 +30,8 @@ public class OrderDataServiceImpl implements OrderDataService {
     }
 
     @Override
-    public void add(Order order) {
-        orderDao.save(order);
+    public String add(Order order) {
+        return orderDao.save(order).getId();
     }
 
     @Override

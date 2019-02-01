@@ -20,8 +20,8 @@ public class LevelDataServiceImpl implements LevelDataService {
 	}
 
 	@Override
-	public void add(Level level) {
-		levelDao.save(level);
+	public String add(Level level) {
+		return levelDao.save(level).getName();
 	}
 
 	@Override

@@ -2,22 +2,24 @@ package bath.entity.coupon;
 
 import bath.entity.groupon.Groupon;
 import bath.entity.user.User;
+import bath.util.OrderUUIDUtil;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table
 public class Coupon {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
 
     @Column(name="isUsed")
     private boolean isUsed;
 
-    @Column(name="groupon")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "groupon_id")
     private Groupon groupon;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,7 +35,9 @@ public class Coupon {
     @Column(name="useTime")
     private Date useTime;
 
+    public Coupon(){}
     public Coupon(Groupon groupon, User user) {
+        this.id=UUID.randomUUID().toString();
         this.groupon = groupon;
         this.user = user;
         this.isUsed=false;

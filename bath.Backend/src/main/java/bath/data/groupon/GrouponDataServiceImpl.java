@@ -4,6 +4,7 @@ import bath.data.dao.groupon.GrouponDao;
 import bath.dataservice.groupon.GrouponDataService;
 import bath.entity.groupon.Groupon;
 import bath.exception.NotExistException;
+import bath.publicdatas.grouponType.GrouponType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,8 @@ public class GrouponDataServiceImpl implements GrouponDataService {
     }
 
     @Override
-    public void add(Groupon groupon) {
-        grouponDao.save(groupon);
+    public String add(Groupon groupon) {
+        return grouponDao.save(groupon).getId();
     }
 
     @Override
@@ -35,8 +36,8 @@ public class GrouponDataServiceImpl implements GrouponDataService {
     }
 
     @Override
-    public List<Groupon> getAll() {
-        return grouponDao.findAll();
+    public List<Groupon> findByType(GrouponType type) {
+        return grouponDao.findByType(type);
     }
 
     @Override

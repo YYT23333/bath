@@ -28,8 +28,8 @@ public class UserDataServiceImpl implements UserDataService {
 
 
 	@Override
-	public void add(User user) {
-		userDao.save(user);
+	public String add(User user) {
+		return userDao.save(user).getOpenid();
 	}
 
 	@Override

@@ -13,8 +13,8 @@ public class UserListResponse extends Response {
 	}
 
 	public UserListResponse(List<User> users) {
+		this.users=new ArrayList<>();
 		if(users!=null && users.size()>0){
-			this.users=new ArrayList<>();
 			for(User temp:users){
 				this.users.add(new UserItem(temp));
 			}

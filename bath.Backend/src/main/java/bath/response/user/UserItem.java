@@ -1,9 +1,18 @@
 package bath.response.user;
 
 import bath.entity.address.Address;
+import bath.entity.cart.Cart;
+import bath.entity.coupon.Coupon;
 import bath.entity.groupon.Groupon;
+import bath.entity.order.Order;
 import bath.entity.user.User;
 import bath.publicdatas.account.Role;
+import bath.response.address.AddressItem;
+import bath.response.cart.CartItem;
+import bath.response.coupon.CouponItem;
+import bath.response.order.OrderItem;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserItem {
@@ -13,26 +22,16 @@ public class UserItem {
 	private Role role;
 	private String phone;
 	private String levelName;
-//	private int integration;
-//	private double balance;
-	private List<Groupon> orders;
-	private List<Groupon> carts;
-	private List<Address> addresses;
-	private List<Cart> coupons;
+	private int integral;
 
-	public UserItem(User user){
-		this.openid=user.getOpenid();
-		this.username=user.getUsername();
-		this.avatarUrl=user.getAvatarUrl();
-		this.role=user.getRole();
-		this.phone=user.getPhone();
-		this.levelName=user.getLevel();
-//		this.integration=user.getIntegration();
-//		this.balance=user.getBalance();
-		this.orders=user.getCart();
-		this.carts=user.getCart();
-		this.addresses=user.getAddresses();
-//		this.coupons=user.getCoupons();
+	public UserItem(User user) {
+		this.openid = user.getOpenid();
+		this.username = user.getUsername();
+		this.avatarUrl = user.getAvatarUrl();
+		this.role = user.getRole();
+		this.phone = user.getPhone();
+		this.levelName = user.getLevel();
+		this.integral=user.getintegral();
 	}
 
 	public String getOpenid() {
@@ -83,51 +82,11 @@ public class UserItem {
 		this.levelName = levelName;
 	}
 
-//	public int getIntegration() {
-//		return integration;
-//	}
-//
-//	public void setIntegration(int integration) {
-//		this.integration = integration;
-//	}
-//
-//	public double getBalance() {
-//		return balance;
-//	}
-//
-//	public void setBalance(double balance) {
-//		this.balance = balance;
-//	}
-
-	public List<Groupon> getOrders() {
-		return orders;
+	public void setintegral(int integral) {
+		this.integral = integral;
 	}
 
-	public void setOrders(List<Groupon> orders) {
-		this.orders = orders;
+	public int getintegral() {
+		return integral;
 	}
-
-	public List<Groupon> getCarts() {
-		return carts;
-	}
-
-	public void setCarts(List<Groupon> carts) {
-		this.carts = carts;
-	}
-
-	public List<Address> getAddresses() {
-		return addresses;
-	}
-
-	public void setAddresses(List<Address> addresses) {
-		this.addresses = addresses;
-	}
-
-//	public List<Coupon> getCoupons() {
-//		return coupons;
-//	}
-//
-//	public void setCoupons(List<Coupon> coupons) {
-//		this.coupons = coupons;
-//	}
 }

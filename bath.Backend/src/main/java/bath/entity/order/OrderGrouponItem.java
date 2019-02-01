@@ -1,5 +1,7 @@
 package bath.entity.order;
 
+import bath.entity.groupon.Groupon;
+
 import javax.persistence.Embeddable;
 
 @Embeddable

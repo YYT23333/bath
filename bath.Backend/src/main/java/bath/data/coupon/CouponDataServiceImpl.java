@@ -19,8 +19,8 @@ public class CouponDataServiceImpl implements CouponDataService {
         this.couponDao=couponDao;
     }
     @Override
-    public void add(Coupon coupon) {
-        couponDao.save(coupon);
+    public String add(Coupon coupon) {
+        return couponDao.save(coupon).getId();
     }
 
     @Override

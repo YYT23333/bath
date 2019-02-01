@@ -25,8 +25,8 @@ public class AdminDataServiceImpl implements AdminDataService {
 	}
 
 	@Override
-	public void add(Admin admin) {
-		adminDao.save(admin);
+	public String add(Admin admin) {
+		return adminDao.save(admin).getId();
 	}
 
 	@Override

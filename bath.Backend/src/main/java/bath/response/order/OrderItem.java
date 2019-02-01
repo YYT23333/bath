@@ -7,6 +7,7 @@ import java.util.List;
 
 public class OrderItem {
     private String id;
+    private String openid;
     private double total;
     private Date date;
     private List<OrderGrouponItem> orderItems;
@@ -17,10 +18,11 @@ public class OrderItem {
 
     public OrderItem(Order order) {
         this.id = order.getId();
+        this.openid=order.getUser().getOpenid();
         this.total = order.getTotal();
         this.date = order.getDate();
-        if (order.getOrderItems() != null && orderItems.size() > 0) {
-            this.orderItems = new ArrayList<>();
+        this.orderItems = new ArrayList<>();
+        if (order.getOrderItems() != null && order.getOrderItems().size() > 0) {
             for (bath.entity.order.OrderGrouponItem temp : order.getOrderItems()) {
                 orderItems.add(new OrderGrouponItem(temp));
             }
@@ -37,6 +39,14 @@ public class OrderItem {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
     public double getTotal() {

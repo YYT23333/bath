@@ -14,8 +14,8 @@ public class GrouponListResponse extends Response {
     }
 
     public GrouponListResponse(List<Groupon> groupons) {
+        this.groupons = new ArrayList<>();
         if (groupons != null && groupons.size() > 0) {
-            this.groupons = new ArrayList<>();
             for (Groupon temp : groupons) {
                 this.groupons.add(new GrouponItem(temp));
             }

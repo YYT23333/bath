@@ -6,15 +6,15 @@ import bath.response.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CartResponse extends Response {
+public class CartItemListResponse extends Response {
     private List<CartItem> cartItems;
 
-    public CartResponse() {
+    public CartItemListResponse() {
     }
 
-    public CartResponse(List<Cart> cartItems) {
+    public CartItemListResponse(List<Cart> cartItems) {
+        this.cartItems=new ArrayList<>();
         if(cartItems!=null && cartItems.size()>0){
-            this.cartItems=new ArrayList<>();
             for(Cart temp:cartItems){
                 this.cartItems.add(new CartItem(temp));
             }

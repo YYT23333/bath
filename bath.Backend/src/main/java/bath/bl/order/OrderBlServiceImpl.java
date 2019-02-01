@@ -3,14 +3,22 @@ package bath.bl.order;
 import bath.blservice.order.OrderBlService;
 import bath.dataservice.coupon.CouponDataService;
 import bath.dataservice.groupon.GrouponDataService;
+import bath.dataservice.exchangeRecord.ExchangeRecordDataService;
 import bath.dataservice.order.OrderDataService;
+import bath.dataservice.user.LevelDataService;
 import bath.dataservice.user.UserDataService;
 import bath.entity.coupon.Coupon;
+import bath.entity.groupon.Groupon;
+import bath.entity.integral.ExchangeRecord;
 import bath.entity.order.Order;
 import bath.entity.order.OrderGrouponItem;
+import bath.entity.user.Level;
 import bath.entity.user.User;
+import bath.exception.IntegralDeficiencyException;
+import bath.exception.LowStocksException;
 import bath.exception.NotExistException;
 import bath.exception.SystemException;
+import bath.response.InfoResponse;
 import bath.response.order.*;
 import bath.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +37,25 @@ public class OrderBlServiceImpl implements OrderBlService {
     private final UserDataService userDataService;
     private final CouponDataService couponDataService;
     private final GrouponDataService grouponDataService;
+    private final LevelDataService levelDataService;
+
+
     @Autowired
-    public OrderBlServiceImpl(OrderDataService orderDataService, UserDataService userDataService,CouponDataService couponDataService,GrouponDataService grouponDataService){
-        this.orderDataService=orderDataService;
-        this.userDataService=userDataService;
-        this.couponDataService=couponDataService;
-        this.grouponDataService=grouponDataService;
+    public OrderBlServiceImpl(OrderDataService orderDataService, UserDataService userDataService, CouponDataService couponDataService, GrouponDataService grouponDataService,LevelDataService levelDataService) {
+        this.orderDataService = orderDataService;
+        this.userDataService = userDataService;
+        this.couponDataService = couponDataService;
+        this.grouponDataService = grouponDataService;
+        this.levelDataService=levelDataService;
     }
 
     @Override
     public SettleResponse settle(List<OrderGrouponItem> orderItems) throws NotExistException {
-        double total=0;
-        for(OrderGrouponItem temp:orderItems){
-            total+=temp.getAmount()*temp.getPrice();
+        double total = 0;
+        for (OrderGrouponItem temp : orderItems) {
+            total += temp.getAmount() * temp.getPrice();
         }
-        SettleResponse order=new SettleResponse();
+        SettleResponse order = new SettleResponse();
         order.setTotal(total);
         order.setOrderItems(orderItems);
         return order;
@@ -69,9 +81,10 @@ public class OrderBlServiceImpl implements OrderBlService {
     private String SIGN_TYPE;
 
     @Override
-    public WxPayResponse createOrder(String openid, List<OrderGrouponItem> orderItems, double total/*,int integration,double coupon,double actualCost*/) throws NotExistException {
-        User user=userDataService.findByOpenid(openid);
-        Order order=new Order(user,OrderUUIDUtil.generateUUID(),orderItems,total/*,integration,coupon,actualCost*/);
+    public WxPayResponse createOrder(String openid, List<OrderGrouponItem> orderItems, double total) throws NotExistException {
+        User user = userDataService.findByOpenid(openid);
+        Level level=levelDataService.findByName(user.getLevel());
+        Order order = new Order(user, OrderUUIDUtil.generateUUID(), orderItems, total,total*level.getDiscountedRatio());
         orderDataService.add(order);
 
         SortedMap<String, String> packageParams = new TreeMap<>();
@@ -80,7 +93,7 @@ public class OrderBlServiceImpl implements OrderBlService {
         packageParams.put("nonce_str", RandomUtil.generateNonceStr());//时间戳
         packageParams.put("body", BODY);//支付主体
         packageParams.put("out_trade_no", order.getId() + "");//BuyCredit表编号
-        packageParams.put("total_fee", order.getTotal() + "");//人民币价格
+        packageParams.put("total_fee", order.getActualCost() + "");//人民币价格
         packageParams.put("notify_url", NOTIFY_URL);//支付返回地址，服务器收到之后将订单状态从"waiting"改为"finished"或"failed"
         packageParams.put("trade_type", TRADE_TYPE);//这个api有，固定的
         packageParams.put("openid", openid);//openid
@@ -148,8 +161,8 @@ public class OrderBlServiceImpl implements OrderBlService {
                     }
                 }
             }
-        }, 15*60*1000); //在15分钟后订单若仍为init或waiting则自动取消
-        return new WxPayResponse(new WxPayItem(order.getId(),waitingTimeStamp,nonceStr,packageContent,signType,paySign));
+        }, 15 * 60 * 1000); //在15分钟后订单若仍为init或waiting则自动取消
+        return new WxPayResponse(new WxPayItem(order.getId(), waitingTimeStamp, nonceStr, packageContent, signType, paySign));
     }
 
     @Override
@@ -171,17 +184,17 @@ public class OrderBlServiceImpl implements OrderBlService {
                 String resultXML = new String(outStream.toByteArray(), StandardCharsets.UTF_8); //将流转换成字符串
                 SortedMap<Object, Object> sortedMap = XMLUtil.getSortedMapFromXML(resultXML);
                 if (PayCommonUtil.isTenpaySign("UTF-8", sortedMap, API_KEY)) {
-                    Order order = orderDataService.findById((String)sortedMap.get("out_trade_no"));
+                    Order order = orderDataService.findById((String) sortedMap.get("out_trade_no"));
                     if (sortedMap.get("return_code").equals("SUCCESS")) {
                         if (sortedMap.get("result_code").equals("SUCCESS")) {
                             if (order.getOrderState().equals("waiting")) {
                                 order.setOrderState("finished");
                                 order.setFinalTimeStamp(String.valueOf(System.currentTimeMillis()));
                                 orderDataService.update(order);
-                                User user=order.getUser();
-                                for(OrderGrouponItem temp:order.getOrderItems()){
-                                    for(int i=1;i<=temp.getAmount();i++){
-                                        Coupon coupon=new Coupon(grouponDataService.findById(temp.getGrouponId()),user);
+                                User user = order.getUser();
+                                for (OrderGrouponItem temp : order.getOrderItems()) {
+                                    for (int i = 1; i <= temp.getAmount(); i++) {
+                                        Coupon coupon = new Coupon(grouponDataService.findById(temp.getGrouponId()), user);
                                         couponDataService.add(coupon);
                                     }
                                 }
@@ -220,19 +233,20 @@ public class OrderBlServiceImpl implements OrderBlService {
     }
 
     @Override
-    public OrderListResponse findByOpenid(String openid) throws NotExistException {
-        List<Order> orders=orderDataService.findByUser(userDataService.findByOpenid(openid));
-        return new OrderListResponse(orders);
+    public OrderListResponse findByUser(String openid) throws NotExistException {
+        User user=userDataService.findByOpenid(openid);
+        return new OrderListResponse(orderDataService.findByUser(user));
     }
 
     @Override
     public OrderListResponse findByOpenidAndState(String openid, String state) throws NotExistException {
-        User user=userDataService.findByOpenid(openid);
-        return new OrderListResponse(orderDataService.findByUserAndState(user,state));
+        User user = userDataService.findByOpenid(openid);
+        return new OrderListResponse(orderDataService.findByUserAndState(user, state));
     }
 
     @Override
     public OrderListResponse getAll() {
         return new OrderListResponse(orderDataService.getAll());
     }
+
 }

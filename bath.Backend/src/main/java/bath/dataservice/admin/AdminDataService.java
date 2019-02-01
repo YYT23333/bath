@@ -9,7 +9,7 @@ public interface AdminDataService {
 
 	boolean isExistent(String username);
 
-	void add(Admin admin);
+	String add(Admin admin);
 
 	Admin findById(String id) throws NotExistException;
 

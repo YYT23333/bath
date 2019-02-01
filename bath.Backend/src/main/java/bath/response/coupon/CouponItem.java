@@ -2,12 +2,15 @@ package bath.response.coupon;
 
 import bath.entity.coupon.Coupon;
 import bath.entity.groupon.Groupon;
+import bath.response.groupon.GrouponItem;
+
 import java.util.Date;
 
 public class CouponItem {
     private String id;
+    private String openid;
     private boolean isUsed;
-    private Groupon groupon;
+    private GrouponItem groupon;
     private Date buyTime;
     private boolean isValid;
     private Date loseEffectiveTime;
@@ -16,8 +19,9 @@ public class CouponItem {
     }
     public CouponItem(Coupon coupon){
         this.id=coupon.getId();
+        this.openid=coupon.getUser().getOpenid();
         this.isUsed=coupon.isUsed();
-        this.groupon=coupon.getGroupon();
+        this.groupon=new GrouponItem(coupon.getGroupon());
         this.buyTime=coupon.getBuyTime();
         this.loseEffectiveTime=coupon.getLoseEffectiveTime();
         this.isValid=(coupon.getLoseEffectiveTime().before(new Date()));
@@ -31,6 +35,14 @@ public class CouponItem {
         this.id = id;
     }
 
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
+    }
+
     public boolean isUsed() {
         return isUsed;
     }
@@ -39,11 +51,11 @@ public class CouponItem {
         isUsed = used;
     }
 
-    public Groupon getGroupon() {
+    public GrouponItem getGroupon() {
         return groupon;
     }
 
-    public void setGroupon(Groupon groupon) {
+    public void setGroupon(GrouponItem groupon) {
         this.groupon = groupon;
     }
 

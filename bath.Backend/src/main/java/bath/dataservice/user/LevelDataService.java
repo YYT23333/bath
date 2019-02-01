@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface LevelDataService {
 
-	void add(Level level);
+	String add(Level level);
 
 	Level findByName(String name) throws NotExistException;
 

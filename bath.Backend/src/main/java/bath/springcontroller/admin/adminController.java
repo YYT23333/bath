@@ -5,6 +5,7 @@ import bath.blservice.admin.AdminBlService;
 import bath.entity.address.Address;
 import bath.exception.DuplicateUsernameException;
 import bath.exception.NotExistException;
+import bath.response.AddResponse;
 import bath.response.BoolResponse;
 import bath.response.InfoResponse;
 import bath.response.WrongResponse;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/admin")
 public class adminController {
     private final AdminBlService adminBlService;
 
@@ -124,19 +126,18 @@ public class adminController {
             @ApiImplicitParam(name = "date", value = "日期", required = true, dataType = "String"),
             @ApiImplicitParam(name = "avatarUrl", value = "头像", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/addAdmin", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
+            @ApiResponse(code = 200, message = "Success", response = AddResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public InfoResponse addAdmin(@RequestParam(name="username")String username, @RequestParam(name="password")String password, @RequestParam(name="limits")String limits, @RequestParam(name="date")String date, @RequestParam(name="avatarUrl")String avatarUrl) throws DuplicateUsernameException {
-        InfoResponse info=adminBlService.addAdmin(username, password, limits, date,avatarUrl);
-        return info;
+    public AddResponse addAdmin(@RequestParam(name="username")String username, @RequestParam(name="password")String password, @RequestParam(name="limits")String limits, @RequestParam(name="date")String date, @RequestParam(name="avatarUrl")String avatarUrl) throws DuplicateUsernameException {
+         return adminBlService.addAdmin(username, password, limits, date,avatarUrl);
     }
 
     @ApiOperation(value = "获取管理员列表", notes = "获取管理员列表")
-    @RequestMapping(value = "/getAdminList", method = RequestMethod.GET)
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = AdminListResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -153,7 +154,7 @@ public class adminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "管理员编号", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/getAdmin", method = RequestMethod.GET)
+    @RequestMapping(value = "/view", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = AdminResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -168,7 +169,7 @@ public class adminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "username", value = "管理员编号", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/getAdminByUsername", method = RequestMethod.POST)
+    @RequestMapping(value = "/find/username", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = AdminResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -188,7 +189,7 @@ public class adminController {
             @ApiImplicitParam(name = "date", value = "日期", required = true, dataType = "String"),
             @ApiImplicitParam(name = "avatarUrl", value = "头像", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/updateAdmin", method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = AdminResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -203,7 +204,7 @@ public class adminController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "管理员编号", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/deleteAdmin", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = BoolResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -219,7 +220,7 @@ public class adminController {
             @ApiImplicitParam(name = "username", value = "管理员用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "管理员密码", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/loginAdmin", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = String.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),

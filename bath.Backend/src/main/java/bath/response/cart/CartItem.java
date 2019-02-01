@@ -2,28 +2,31 @@ package bath.response.cart;
 
 import bath.entity.cart.Cart;
 import bath.entity.groupon.Groupon;
+import bath.response.groupon.GrouponItem;
 
 import javax.persistence.*;
 
-public class CartItem { @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+public class CartItem {
+    private int id;
     private int amount;
-    private Groupon groupOn;
+    private String openid;
+    private GrouponItem groupOn;
 
     public CartItem() {
     }
 
     public CartItem(Cart cart) {
         this.id=cart.getId();
+        this.openid=cart.getUser().getOpenid();
         this.amount = cart.getAmount();
-        this.groupOn=cart.getGroupOn();
+        this.groupOn=new GrouponItem(cart.getGroupOn());
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -35,11 +38,19 @@ public class CartItem { @GeneratedValue(strategy = GenerationType.AUTO)
         this.amount = amount;
     }
 
-    public Groupon getGroupOn() {
+    public GrouponItem getGroupOn() {
         return groupOn;
     }
 
-    public void setGroupOn(Groupon groupOn) {
+    public void setGroupOn(GrouponItem groupOn) {
         this.groupOn = groupOn;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 }

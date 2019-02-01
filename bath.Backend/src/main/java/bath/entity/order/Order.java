@@ -22,18 +22,9 @@ public class Order {
     @Column(name = "total")
     private double total;
 
-
-//    //积分优惠
-//    @Column(name="integration")
-//    private double integration;
-//
-//    //抵用券/优惠券 抵用金额
-//    @Column(name="coupon")
-//    private double coupon;
-//
-//    //实际付款
-//    @Column(name="actualCost")
-//    private double actualCost;
+    //实际付款
+    @Column(name="actualCost")
+    private double actualCost;
 
     @Column(name = "date")
     private Date date;
@@ -65,13 +56,11 @@ public class Order {
     public Order() {
     }
 
-    public Order(User user, String id, List<OrderGrouponItem> orderItems, double total/*,double integration,double coupon,double avctualCost*/) {
+    public Order(User user, String id, List<OrderGrouponItem> orderItems, double total,double avctualCost) {
         this.user=user;
         this.id = id;
         this.total=total;
-//        this.integration=integration;
-//        this.coupon=coupon;
-//        this.actualCost=avctualCost;
+        this.actualCost=avctualCost;
         this.orderItems=orderItems;
         this.date=new Date();
         this.orderState = "init";
@@ -122,29 +111,14 @@ public class Order {
     public void setFinalTimeStamp(String finalTimeStamp) {
         this.finalTimeStamp = finalTimeStamp;
     }
-    //    public double getIntegration() {
-//        return integration;
-//    }
-//
-//    public void setIntegration(double integration) {
-//        this.integration = integration;
-//    }
-//
-//    public double getCoupon() {
-//        return coupon;
-//    }
-//
-//    public void setCoupon(double coupon) {
-//        this.coupon = coupon;
-//    }
-//
-//    public double getActualCost() {
-//        return actualCost;
-//    }
-//
-//    public void setActualCost(double actualCost) {
-//        this.actualCost = actualCost;
-//    }
+
+    public double getActualCost() {
+        return actualCost;
+    }
+
+    public void setActualCost(double actualCost) {
+        this.actualCost = actualCost;
+    }
 
     public void setDate(Date date) {
         this.date = date;

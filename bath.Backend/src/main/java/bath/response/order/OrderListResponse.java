@@ -10,8 +10,8 @@ public class OrderListResponse extends Response {
     private List<OrderItem> orders;
 
     public OrderListResponse(List<Order> orders) {
+        this.orders=new ArrayList<>();
         if(orders!=null && orders.size()>0){
-            this.orders=new ArrayList<>();
             for(Order temp:orders){
                 this.orders.add(new OrderItem(temp));
             }

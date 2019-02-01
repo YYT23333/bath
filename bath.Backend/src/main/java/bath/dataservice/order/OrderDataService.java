@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderDataService {
     Order findById(String id) throws NotExistException;
-    void add(Order order);
+    String add(Order order);
     void update(Order order) throws NotExistException;
     List<Order> findByUser(User user)throws  NotExistException;
     List<Order> findByUserAndState(User user,String state);

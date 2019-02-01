@@ -1,5 +1,7 @@
 package bath.entity.groupon;
 
+import bath.publicdatas.grouponType.GrouponType;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -36,6 +38,9 @@ public class Groupon {
 
     @Column(name = "amount")
     private int amount;
+
+    @Column(name="type")
+    private GrouponType type;
 
 
     public String getId() {
@@ -118,5 +123,13 @@ public class Groupon {
 
     public int getAmount() {
         return amount;
+    }
+
+    public GrouponType getType() {
+        return type;
+    }
+
+    public void setType(GrouponType type) {
+        this.type = type;
     }
 }

@@ -3,20 +3,19 @@ package bath.bl.user;
 import bath.blservice.user.UserBlService;
 import bath.dataservice.user.LevelDataService;
 import bath.dataservice.user.UserDataService;
-import bath.entity.address.Address;
-import bath.entity.cart.Cart;
-import bath.entity.coupon.Coupon;
-import bath.entity.order.Order;
 import bath.entity.user.Level;
 import bath.entity.user.User;
 import bath.exception.CannotGetOpenIdAndSessionKeyException;
 import bath.exception.NotExistException;
 import bath.publicdatas.account.Role;
+import bath.response.AddResponse;
 import bath.response.InfoResponse;
 import bath.response.account.OpenIdAndSessionKeyResponse;
 import bath.response.address.AddressListResponse;
-import bath.response.cart.CartResponse;
+import bath.response.cart.CartItemListResponse;
 import bath.response.coupon.CouponListResponse;
+import bath.response.exchangeRecords.ExchangeRecordListResponse;
+import bath.response.order.OrderListResponse;
 import bath.response.user.*;
 import bath.security.jwt.JwtService;
 import bath.security.jwt.JwtUserDetailsService;
@@ -49,9 +48,8 @@ public class UserBlServiceImpl implements UserBlService {
 	}
 
 	@Override
-	public InfoResponse addUser(String openid, String username, String avatarUrl, String phone) throws NotExistException {
-		userDataService.add(new User(openid, username, avatarUrl, phone));
-		return new InfoResponse();
+	public AddResponse addUser(String openid, String username, String avatarUrl, String phone) throws NotExistException {
+		return new AddResponse(userDataService.add(new User(openid, username, avatarUrl, phone)));
 	}
 
 	@Override
@@ -66,8 +64,26 @@ public class UserBlServiceImpl implements UserBlService {
 	}
 
 	@Override
-	public InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName, /*int integration, double balance, */List<Order> orders, List<Cart> carts, List<Address> addresses, List<Coupon> coupons) throws NotExistException {
-		User user=new User(openid,username,role,avatarUrl,phone,levelName,orders,carts,addresses,coupons);
+	public InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName, int integral) throws NotExistException {
+		User user=userDataService.findByOpenid(openid);
+		user.setUsername(username);
+		user.setRole(role);
+		user.setAvatarUrl(avatarUrl);
+		user.setPhone(phone);
+		user.setLevel(levelName);
+		user.setintegral(integral);
+		userDataService.update(user);
+		return new InfoResponse();
+	}
+
+	@Override
+	public InfoResponse updateUser(String openid, String username, Role role, String phone, String levelName, int integral) throws NotExistException {
+		User user=userDataService.findByOpenid(openid);
+		user.setUsername(username);
+		user.setRole(role);
+		user.setPhone(phone);
+		user.setLevel(levelName);
+		user.setintegral(integral);
 		userDataService.update(user);
 		return new InfoResponse();
 	}
@@ -85,9 +101,8 @@ public class UserBlServiceImpl implements UserBlService {
 
 
 	@Override
-	public InfoResponse addLevel(String name, double discountedRatio) {
-		levelDataService.add(new Level(name,discountedRatio));
-		return new InfoResponse();
+	public AddResponse addLevel(String name, double discountedRatio) {
+		return new AddResponse(levelDataService.add(new Level(name,discountedRatio)));
 	}
 
 	@Override
@@ -168,7 +183,7 @@ public class UserBlServiceImpl implements UserBlService {
 			String openid=(String) JSONObject.fromObject(response.getBody()).get("openid");
 //            User user=null;
 //			try {
-//				user = userDataService.findByOpenid(openid);
+//				user = userDataService.findByUser(openid);
 //			} catch (NotExistException e) {
 //				e.printStackTrace();
 //			}
@@ -280,22 +295,12 @@ public class UserBlServiceImpl implements UserBlService {
 	}
 
 	@Override
-	public AddressListResponse getMyAddress(String openid) throws NotExistException {
-		User user=userDataService.findByOpenid(openid);
-		return new AddressListResponse(user.getAddresses());
+	public InfoResponse updateMyProfile(String openid, String username, String phone) throws NotExistException {
+		User user = userDataService.findByOpenid(openid);
+		user.setUsername(username);
+		user.setPhone(phone);
+		userDataService.update(user);
+		return new InfoResponse();
 	}
-
-	@Override
-	public CouponListResponse getMyCoupon(String openid) throws NotExistException {
-		User user=userDataService.findByOpenid(openid);
-		return new CouponListResponse(user.getCoupons());
-	}
-
-	@Override
-	public CartResponse getMyCart(String openid) throws NotExistException {
-		User user=userDataService.findByOpenid(openid);
-		return new CartResponse(user.getCart());
-	}
-
 
 }

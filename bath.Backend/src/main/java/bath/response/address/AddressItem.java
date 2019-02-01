@@ -3,7 +3,8 @@ package bath.response.address;
 import bath.entity.address.Address;
 
 public class AddressItem {
-    private String id;
+    private int id;
+    private String openid;
     private String receiver;//收货人姓名
     private String phone;//收货人电话
     private String zone;//地区信息
@@ -14,6 +15,7 @@ public class AddressItem {
     }
     public AddressItem(Address address){
         this.id=address.getId();
+        this.openid=address.getUser().getOpenid();
         this.receiver=address.getReceiver();
         this.phone=address.getPhone();
         this.zone=address.getZone();
@@ -21,12 +23,20 @@ public class AddressItem {
         this.phone=address.getPostcode();
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
     }
 
     public String getReceiver() {

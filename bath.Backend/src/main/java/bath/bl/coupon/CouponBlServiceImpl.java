@@ -2,6 +2,7 @@ package bath.bl.coupon;
 
 import bath.blservice.coupon.CouponBlService;
 import bath.dataservice.coupon.CouponDataService;
+import bath.dataservice.user.UserDataService;
 import bath.entity.coupon.Coupon;
 import bath.entity.user.User;
 import bath.exception.NotExistException;
@@ -16,9 +17,11 @@ import java.util.Date;
 @Service
 public class CouponBlServiceImpl implements CouponBlService {
     private final CouponDataService couponDataService;
+    private final UserDataService userDataService;
     @Autowired
-    public CouponBlServiceImpl(CouponDataService couponDataService){
+    public CouponBlServiceImpl(CouponDataService couponDataService,UserDataService userDataService){
         this.couponDataService=couponDataService;
+        this.userDataService=userDataService;
     }
     @Override
     public InfoResponse useCoupon(String id) throws NotExistException {
@@ -32,5 +35,11 @@ public class CouponBlServiceImpl implements CouponBlService {
     @Override
     public CouponResponse findCouponById(String id) throws NotExistException {
         return new CouponResponse(couponDataService.findById(id));
+    }
+
+    @Override
+    public CouponListResponse findByUser(String openid) throws NotExistException {
+        User user=userDataService.findByOpenid(openid);
+        return new CouponListResponse(couponDataService.findByUser(user));
     }
 }

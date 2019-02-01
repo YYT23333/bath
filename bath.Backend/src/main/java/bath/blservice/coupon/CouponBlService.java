@@ -18,4 +18,11 @@ public interface CouponBlService {
      * @return 优惠码
      */
     CouponResponse findCouponById(String id)throws NotExistException;
+
+    /**
+     * 通过用户的openid，查找用户的所有优惠券
+     * @param openid
+     * @return 该用户的所有优惠券
+     */
+    CouponListResponse findByUser(String openid) throws NotExistException;
 }

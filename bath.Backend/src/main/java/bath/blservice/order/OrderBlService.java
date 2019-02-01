@@ -1,7 +1,10 @@
 package bath.blservice.order;
 
 import bath.entity.order.OrderGrouponItem;
+import bath.exception.IntegralDeficiencyException;
+import bath.exception.LowStocksException;
 import bath.exception.NotExistException;
+import bath.response.InfoResponse;
 import bath.response.order.OrderListResponse;
 import bath.response.order.OrderResponse;
 import bath.response.order.SettleResponse;
@@ -24,7 +27,7 @@ public interface OrderBlService {
      * @param orderItems
      * @return
      */
-    WxPayResponse createOrder(String openid, List<OrderGrouponItem> orderItems, double total/*,int integration,double coupon,double actualCost*/)throws NotExistException;
+    WxPayResponse createOrder(String openid, List<OrderGrouponItem> orderItems, double total/*,int exchange,double coupon,double actualCost*/)throws NotExistException;
 
     /**
      * 获得支付结果
@@ -45,7 +48,7 @@ public interface OrderBlService {
      * @param openid
      * @return 订单列表
      */
-    OrderListResponse findByOpenid(String openid) throws NotExistException;
+    OrderListResponse findByUser(String openid) throws NotExistException;
 
     /**
      * 根据用户和订单状态查找订单

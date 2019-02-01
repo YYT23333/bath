@@ -2,6 +2,7 @@ package bath.blservice.admin;
 
 import bath.exception.DuplicateUsernameException;
 import bath.exception.NotExistException;
+import bath.response.AddResponse;
 import bath.response.BoolResponse;
 import bath.response.InfoResponse;
 import bath.response.admin.AdminListResponse;
@@ -33,7 +34,7 @@ public interface AdminBlService {
 	 * @param face 管理员头像
 	 * @return 是否成功
 	 */
-	InfoResponse addAdmin(String username, String password, String limits, String date, String face) throws DuplicateUsernameException;
+	AddResponse addAdmin(String username, String password, String limits, String date, String face) throws DuplicateUsernameException;
 
 	/**
 	 * 获取管理员信息

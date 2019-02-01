@@ -4,6 +4,9 @@ import bath.blservice.groupon.GrouponBlService;
 import bath.dataservice.groupon.GrouponDataService;
 import bath.entity.groupon.Groupon;
 import bath.exception.NotExistException;
+import bath.publicdatas.grouponType.GrouponType;
+import bath.response.AddResponse;
+import bath.response.InfoResponse;
 import bath.response.groupon.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +24,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         this.grouponDataService=grouponDataService;
     }
     @Override
-    public GrouponAddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime, Date putOnShelvesTime, Date pullOffShelvesTime, String description, int amount) {
+    public AddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime, Date putOnShelvesTime, Date pullOffShelvesTime, String description, int amount, String type) {
         Groupon groupon=new Groupon();
         groupon.setName(name);
         groupon.setOriginalPrice(originalPrice);
@@ -32,20 +35,21 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         groupon.setPullOffShelveTime(pullOffShelvesTime);
         groupon.setDescription(description);
         groupon.setAmount(amount);
+        groupon.setType(GrouponType.valueOf(type));
         String id=UUID.randomUUID().toString();
         groupon.setId(id);
         grouponDataService.add(groupon);
-        return new GrouponAddResponse(id);
+        return new AddResponse(id);
     }
 
     @Override
-    public GrouponDeleteResponse deleteGroupon(String id) throws NotExistException {
+    public InfoResponse deleteGroupon(String id) throws NotExistException {
         grouponDataService.deleteById(id);
-        return new GrouponDeleteResponse(id);
+        return new InfoResponse();
     }
 
     @Override
-    public GrouponUpdateResponse updateGroupon(String id, String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime,Date putOnShelvesTime,Date pullOffShelvesTime, String description, int amount) throws NotExistException {
+    public InfoResponse updateGroupon(String id, String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime,Date putOnShelvesTime,Date pullOffShelvesTime, String description, int amount,String type) throws NotExistException {
         Groupon groupon=grouponDataService.findById(id);
         groupon.setName(name);
         groupon.setOriginalPrice(originalPrice);
@@ -56,25 +60,26 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         groupon.setPullOffShelveTime(pullOffShelvesTime);
         groupon.setDescription(description);
         groupon.setAmount(amount);
+        groupon.setType(GrouponType.valueOf(type));
         grouponDataService.update(groupon);
-        return new GrouponUpdateResponse(id);
+        return new InfoResponse();
     }
 
     @Override
-    public GrouponUpdateResponse putOnShelves(String id) throws NotExistException {
+    public InfoResponse putOnShelves(String id) throws NotExistException {
         Groupon groupon=grouponDataService.findById(id);
         groupon.setPutOnShelveTime(new Date());
         groupon.setPullOffShelveTime(null);
         grouponDataService.update(groupon);
-        return new GrouponUpdateResponse(id);
+        return new InfoResponse();
     }
 
     @Override
-    public GrouponUpdateResponse pullOffShelves(String id) throws NotExistException {
+    public InfoResponse pullOffShelves(String id) throws NotExistException {
         Groupon groupon=grouponDataService.findById(id);
         groupon.setPullOffShelveTime(new Date());
         grouponDataService.update(groupon);
-        return new GrouponUpdateResponse(id);
+        return new InfoResponse();
     }
 
     @Override
@@ -83,13 +88,18 @@ public class GrouponBlServiceImpl implements GrouponBlService {
     }
 
     @Override
-    public GrouponListResponse getAll()  {
-        return new GrouponListResponse(grouponDataService.getAll());
+    public GrouponListResponse getAllOrdinary() {
+        return new GrouponListResponse(grouponDataService.findByType(GrouponType.ORDINARY));
     }
 
     @Override
-    public GrouponListResponse getAvailableGroupon() throws NotExistException {
-        List<Groupon> grouponList=grouponDataService.getAll();
+    public GrouponListResponse getAllIntegral() {
+        return new GrouponListResponse(grouponDataService.findByType(GrouponType.INTEGRAL));
+    }
+
+    @Override
+    public GrouponListResponse getAvailableOrdinaryGroupon() throws NotExistException {
+        List<Groupon> grouponList=grouponDataService.findByType(GrouponType.ORDINARY);
         List<Groupon> availableList=new ArrayList<>();
         Date currentDate=new Date();
         for(Groupon temp:grouponList){
@@ -101,4 +111,21 @@ public class GrouponBlServiceImpl implements GrouponBlService {
             throw new NotExistException("正在销售的团购","");
         return new GrouponListResponse(availableList);
     }
+
+    @Override
+    public GrouponListResponse getAvailableIntegralGroupon() throws NotExistException {
+        List<Groupon> grouponList=grouponDataService.findByType(GrouponType.INTEGRAL);
+        List<Groupon> availableList=new ArrayList<>();
+        Date currentDate=new Date();
+        for(Groupon temp:grouponList){
+            if(temp.getPutOnShelveTime().before(currentDate) && (temp.getPullOffShelveTime()==null || temp.getPullOffShelveTime().after(currentDate))){
+                availableList.add(temp);
+            }
+        }
+        if(availableList==null || availableList.size()<1)
+            throw new NotExistException("可兑换的团购","");
+        return new GrouponListResponse(availableList);
+    }
+
+
 }

@@ -13,8 +13,8 @@ public class LevelListResponse extends Response {
 	}
 
 	public LevelListResponse(List<Level> levels) {
+		this.levels=new ArrayList<>();
 		if(levels!=null && levels.size()>0){
-			this.levels=new ArrayList<>();
 			for(Level temp:levels){
 				this.levels.add(new LevelItem(temp));
 			}

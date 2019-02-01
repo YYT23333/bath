@@ -4,11 +4,16 @@ import bath.blservice.address.AddressBlService;
 import bath.dataservice.address.AddressDataService;
 import bath.dataservice.user.UserDataService;
 import bath.entity.address.Address;
+import bath.entity.user.User;
 import bath.exception.NotExistException;
+import bath.response.AddResponse;
 import bath.response.InfoResponse;
+import bath.response.address.AddressListResponse;
 import bath.response.address.AddressResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 public class AddressBlServiceImpl implements AddressBlService {
@@ -20,20 +25,20 @@ public class AddressBlServiceImpl implements AddressBlService {
         this.userDataService=userDataService;
     }
     @Override
-    public InfoResponse addAddress(String openid, String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException {
+    public AddResponse addAddress(String openid, String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException {
         Address address=new Address(userDataService.findByOpenid(openid),receiver,phone,zone,detailAddress,postcode);
-        addressDataService.add(address);
-        return new InfoResponse();
+        return new AddResponse(addressDataService.add(address));
     }
 
     @Override
-    public InfoResponse deleteAddress(String id) throws NotExistException {
+    @Transactional
+    public InfoResponse deleteAddress(int id) throws NotExistException {
         addressDataService.deleteById(id);
         return new InfoResponse();
     }
 
     @Override
-    public InfoResponse updateAddress(String id,String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException {
+    public InfoResponse updateAddress(int id,String receiver, String phone, String zone, String detailAddress, String postcode) throws NotExistException {
         Address address=addressDataService.findById(id);
         address.setReceiver(receiver);
         address.setPostcode(postcode);
@@ -45,7 +50,13 @@ public class AddressBlServiceImpl implements AddressBlService {
     }
 
     @Override
-    public AddressResponse findAddressById(String id) throws NotExistException {
+    public AddressResponse findAddressById(int id) throws NotExistException {
         return new AddressResponse(addressDataService.findById(id));
+    }
+
+    @Override
+    public AddressListResponse findByUser(String openid) throws NotExistException {
+        User user=userDataService.findByOpenid(openid);
+        return new AddressListResponse(addressDataService.findByUser(user));
     }
 }

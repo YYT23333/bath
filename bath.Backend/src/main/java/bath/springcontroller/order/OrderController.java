@@ -1,9 +1,12 @@
 package bath.springcontroller.order;
 
 import bath.blservice.order.OrderBlService;
+import bath.exception.IntegralDeficiencyException;
+import bath.exception.LowStocksException;
 import bath.exception.NotExistException;
 import bath.parameters.order.OrderCreateParameters;
 import bath.parameters.order.SettleParameters;
+import bath.response.InfoResponse;
 import bath.response.Response;
 import bath.response.WrongResponse;
 import bath.response.order.OrderListResponse;
@@ -17,8 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
 @RestController
+@RequestMapping("/order")
 public class OrderController {
     private final OrderBlService orderBlService;
     @Autowired
@@ -38,7 +41,7 @@ public class OrderController {
     }
 
     @ApiOperation(value="用户提交订单",notes="用户提交订单")
-    @RequestMapping(value = "/submitOrder", method = RequestMethod.POST)
+    @RequestMapping(value = "/submit", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = WxPayResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -60,25 +63,12 @@ public class OrderController {
         return orderBlService.getWxPayResult(request);
     }
 
-    @ApiOperation(value="用户通过openid查看自己的所有订单",notes="用户通过openid查看自己的所有订单")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="openid",value="用户编号",required = true,dataType = "String")
-    })
-    @RequestMapping(value="/MyOrder",method = RequestMethod.POST)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Success", response = OrderListResponse.class),
-            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
-            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
-    @ResponseBody
-    public ResponseEntity<Response> getOrderByOpenid(@RequestParam(name="openid")String openid) throws NotExistException {
-        return new ResponseEntity<>(orderBlService.findByOpenid(openid),HttpStatus.OK);
-    }
 
     @ApiOperation(value="通过id查找订单",notes="通过id查找订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name="id",value="订单编号",required = true,dataType = "String")
     })
-    @RequestMapping("/order")
+    @RequestMapping(value = "/view",method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = OrderResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -89,7 +79,7 @@ public class OrderController {
     }
 
     @ApiOperation(value="查看所有订单",notes="查看所有订单")
-    @RequestMapping("/orders")
+    @RequestMapping(value = "/all",method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = OrderListResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -99,8 +89,21 @@ public class OrderController {
         return new ResponseEntity<>(orderBlService.getAll(),HttpStatus.OK);
     }
 
+
+    @ApiOperation(value = "用户通过openid查看自己的所有订单", notes = "用户通过openid查看自己的所有订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "openid", value = "用户编号", required = true, dataType = "String")
+    })
+    @RequestMapping(value = "/MyOrder", method = RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = OrderListResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public ResponseEntity<Response> fingByUserAndState(@RequestParam(name="openid")String openid,@RequestParam(name="state")String state) throws NotExistException {
-        return new ResponseEntity<>(orderBlService.findByOpenidAndState(openid,state),HttpStatus.OK);
+    public ResponseEntity<Response> findByUser(@RequestParam(name = "openid") String openid) throws NotExistException {
+        return new ResponseEntity<>(orderBlService.findByUser(openid), HttpStatus.OK);
     }
+
+
+
 }

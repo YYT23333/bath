@@ -3,6 +3,7 @@ package bath.entity.user;
 import bath.entity.address.Address;
 import bath.entity.cart.Cart;
 import bath.entity.coupon.Coupon;
+import bath.entity.integral.ExchangeRecord;
 import bath.entity.order.Order;
 import bath.publicdatas.account.Role;
 
@@ -26,18 +27,18 @@ public class User {
     private String phone; //电话号码
     @Column(name="level")
     private String level; //用户所属会员等级
-//    @Column(name="integration")
-//    private int integration;//积分
-//    @Column(name="balance")
-//    private double balance;//储值金余额
-    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @Column(name="integral")
+    private int integral;//积分
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "user")
     private List<Order> orders;//订单
-    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "user")
     private List<Cart> cart;//购物车
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "user")
     private List<Address> addresses;//地址
-    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "user")
     private List<Coupon> coupons;//优惠券
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "user")
+    private List<ExchangeRecord> exchangeRecords;
 
     public User() {
     }
@@ -49,12 +50,13 @@ public class User {
         this.avatarUrl = avatarUrl;
         this.phone = "";
         this.level = "common";
-        //this.integration = 0;
+        this.integral = 0;
         //this.balance = 0;
         this.orders = new ArrayList<>();
         this.cart = new ArrayList<>();
         this.addresses = new ArrayList<>();
         this.coupons = new ArrayList<>();
+        this.exchangeRecords=new ArrayList<>();
 
     }
 
@@ -65,26 +67,29 @@ public class User {
         this.avatarUrl = avatarUrl;
         this.phone = phone;
         this.level = "common";
-        //this.integration = 0;
+        //this.exchange = 0;
         //this.balance = 0;
         this.orders = new ArrayList<>();
         this.cart = new ArrayList<>();
         this.addresses = new ArrayList<>();
         this.coupons = new ArrayList<>();
+        this.exchangeRecords=new ArrayList<>();
 
     }
 
-    public User(String openid, String username, Role role, String avatarUrl, String phone, String level, List<Order> orders, List<Cart> cart, List<Address> addresses,List<Coupon> coupons) {
+    public User(String openid, String username, Role role, String avatarUrl, String phone, String level, int integral,List<Order> orders, List<Cart> cart, List<Address> addresses,List<Coupon> coupons,List<ExchangeRecord> exchangeRecords) {
         this.openid = openid;
         this.username = username;
         this.role = role;
         this.avatarUrl = avatarUrl;
         this.phone = phone;
         this.level = level;
+        this.integral=integral;
         this.orders = orders;
         this.cart = cart;
         this.addresses = addresses;
         this.coupons=coupons;
+        this.exchangeRecords=exchangeRecords;
     }
 
     public String getOpenid() {
@@ -125,13 +130,12 @@ public class User {
         this.avatarUrl = avatarUrl;
     }
 
-//    public int getIntegration() {
-//        return integration;
-//    }
-//
-//    public void setIntegration(int integration) {
-//        this.integration = integration;
-//    }
+    public int getintegral() {
+        return integral;
+    }
+
+    public void setintegral(int integral) {
+        this.integral = integral;}
 
 //    public double getBalance() {
 //        return balance;
@@ -179,5 +183,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<ExchangeRecord> getExchangeRecords() {
+        return exchangeRecords;
+    }
+
+    public void setExchangeRecords(List<ExchangeRecord> exchangeRecords) {
+        this.exchangeRecords = exchangeRecords;
     }
 }

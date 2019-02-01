@@ -1,21 +1,17 @@
 package bath.blservice.user;
 
-import bath.entity.address.Address;
-import bath.entity.cart.Cart;
-import bath.entity.coupon.Coupon;
-import bath.entity.groupon.Groupon;
-import bath.entity.order.Order;
 import bath.exception.CannotGetOpenIdAndSessionKeyException;
 import bath.exception.NotExistException;
 import bath.publicdatas.account.Role;
+import bath.response.AddResponse;
 import bath.response.InfoResponse;
 import bath.response.account.OpenIdAndSessionKeyResponse;
 import bath.response.address.AddressListResponse;
-import bath.response.cart.CartResponse;
+import bath.response.cart.CartItemListResponse;
 import bath.response.coupon.CouponListResponse;
+import bath.response.exchangeRecords.ExchangeRecordListResponse;
+import bath.response.order.OrderListResponse;
 import bath.response.user.*;
-
-import java.util.List;
 
 public interface UserBlService {
 
@@ -31,7 +27,7 @@ public interface UserBlService {
 	 * @param  phone 电话号码
 	 * @return 是否成功
 	 */
-	InfoResponse addUser(String openid, String username, String avatarUrl, String phone) throws NotExistException;
+	AddResponse addUser(String openid, String username, String avatarUrl, String phone) throws NotExistException;
 
 	/**
 	 * 根据微信openid获取用户信息(Admin)
@@ -47,22 +43,28 @@ public interface UserBlService {
 	UserListResponse getUserList();
 
 	/**
-	 * 根据微信openid更新用户信息(Admin)
+	 * 根据微信openid更新用户信息(Admin)(包括头像)
 	 * @param openid 微信openid
 	 * @param username 用户名
 	 * @param role
 	 * @param avatarUrl
 	 * @param phone
 	 * @param levelName
-	 //* @param integration
-	 //* @param balance
-	 * @param orders
-	 * @param carts
-	 * @param addresses
-	'' * @param coupons
+	 * @param integral
 	 * @return 是否成功
 	 */
-	InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName,/*int integration,double balance,*/List<Order> orders, List<Cart> carts, List<Address> addresses,List<Coupon> coupons)throws NotExistException;
+	InfoResponse updateUser(String openid, String username, Role role, String avatarUrl, String phone, String levelName,int integral)throws NotExistException;
+	/**
+	 * 根据微信openid更新用户信息(Admin)(不包括头像)
+	 * @param openid 微信openid
+	 * @param username 用户名
+	 * @param role
+	 * @param phone
+	 * @param levelName
+	 * @param integral
+	 * @return 是否成功
+	 */
+	InfoResponse updateUser(String openid, String username, Role role, String phone, String levelName,int integral)throws NotExistException;
 	/**
 	 * 根据微信openid删除用户(Admin)
 	 * @param openid 微信openid
@@ -76,7 +78,7 @@ public interface UserBlService {
 	 * @param discountedRatio 该会员级别的折扣率，价格是原价的discountedRatio倍
 	 * @return 是否成功
 	 */
-	InfoResponse addLevel(String name, double discountedRatio);
+	AddResponse addLevel(String name, double discountedRatio);
 
 	/**
 	 * 获取所有会员等级信息(User&Admin)
@@ -151,23 +153,11 @@ public interface UserBlService {
 	InfoResponse updateMyProfile(String openid, String username, String avatarUrl, String phone) throws NotExistException;
 
 	/**
-	 * 用户获取自己的所有地址
-	 * @param openid
-	 * @return 地址列表
+	 * 用户修改自己的个人信息，只能改部分属性(User)
+	 * @param openid 用户微信openid
+	 * @param username 用户名
+	 * @param  phone 电话
+	 * @return 是否成功
 	 */
-	AddressListResponse getMyAddress(String openid)throws NotExistException;
-
-	/**
-	 * 用户获取自己的优惠码列表
-	 * @param openid
-	 * @return 优惠码列表
-	 */
-	CouponListResponse getMyCoupon(String openid)throws NotExistException;
-
-	/**
-	 * 用户获取自己的购物车列表
-	 * @param openid
-	 * @return 购物车列表
-	 */
-	CartResponse getMyCart(String openid) throws NotExistException;
+	InfoResponse updateMyProfile(String openid, String username, String phone) throws NotExistException;
 }

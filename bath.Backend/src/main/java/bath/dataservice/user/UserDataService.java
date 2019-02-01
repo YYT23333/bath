@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface UserDataService {
 
-	void add(User user);
+	String add(User user);
 
 	User findByOpenid(String openid) throws NotExistException;
 

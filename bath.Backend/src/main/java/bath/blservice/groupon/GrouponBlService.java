@@ -1,27 +1,35 @@
 package bath.blservice.groupon;
 
 import bath.exception.NotExistException;
+import bath.response.AddResponse;
+import bath.response.InfoResponse;
 import bath.response.groupon.*;
 
 import java.util.Date;
 
 public interface GrouponBlService {
+
     /**
      * 管理员添加团购
      * @param name
      * @param originalPrice
      * @param price
+     * @param takeEffectTime
+     * @param loseEffectTime
+     * @param putOnShelvesTime
+     * @param pullOffShelvesTime
      * @param description
+     * @param amount
      * @return 是否成功
      */
-    GrouponAddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime,Date loseEffectTime,Date putOnShelvesTime,Date pullOffShelvesTime, String description,int amount);
+    AddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime, Date putOnShelvesTime, Date pullOffShelvesTime, String description, int amount, String type);
 
     /**
      * 管理员删除团购
      * @param id
      * @return
      */
-    GrouponDeleteResponse deleteGroupon(String id)throws NotExistException;
+    InfoResponse deleteGroupon(String id)throws NotExistException;
    /**
     * 管理员修改团购
     * @param id
@@ -36,21 +44,21 @@ public interface GrouponBlService {
     * @param amount
     * @return 是否成功
     */
-    GrouponUpdateResponse updateGroupon(String id,String name, double originalPrice, double price, Date takeEffectTime,Date loseEffectTime, Date putOnShelvesTime,Date pullOffShelvesTime,String description,int amount)throws NotExistException;
+    InfoResponse updateGroupon(String id,String name, double originalPrice, double price, Date takeEffectTime,Date loseEffectTime, Date putOnShelvesTime,Date pullOffShelvesTime,String description,int amount,String type)throws NotExistException;
 
     /**
      * 管理员上架团购
      * @param id
      * @return 是否成功
      */
-    GrouponUpdateResponse putOnShelves(String id)throws NotExistException;
+    InfoResponse putOnShelves(String id)throws NotExistException;
 
     /**
      * 管理员下架团购
      * @param id
      * @return 是否成功
      */
-    GrouponUpdateResponse pullOffShelves(String id)throws NotExistException;
+    InfoResponse pullOffShelves(String id)throws NotExistException;
 
     /**
      * 通过id查找团购
@@ -60,18 +68,30 @@ public interface GrouponBlService {
     GrouponResponse findById(String id)throws NotExistException;
 
     /**
-     * 查找所有的团购
+     * 查找所有的普通团购
      * @param
-     * @return 所有团购
+     * @return 所有的普通团购
      */
-    GrouponListResponse getAll();
+    GrouponListResponse getAllOrdinary();
 
     /**
-     * 查找已经上架的团购
+     * 查找所有的积分兑换团购
      * @param
-     * @return
+     * @return 所有的积分兑换团购
      */
-    GrouponListResponse getAvailableGroupon()throws NotExistException;
+    GrouponListResponse getAllIntegral();
 
+    /**
+     * 查找已经上架的普通团购
+     * @param
+     * @return 所有已经上架的普通团购
+     */
+    GrouponListResponse getAvailableOrdinaryGroupon()throws NotExistException;
 
+    /**
+     * 查找已经上架的积分兑换团购
+     * @param
+     * @return 所有已经上架的积分兑换团购
+     */
+    GrouponListResponse getAvailableIntegralGroupon()throws NotExistException;
 }

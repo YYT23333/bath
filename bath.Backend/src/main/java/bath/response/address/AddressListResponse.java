@@ -13,8 +13,8 @@ public class AddressListResponse extends Response {
     }
 
     public AddressListResponse(List<Address> addressList) {
+        this.addressItemList=new ArrayList<>();
         if(addressList!=null && addressList.size()>0){
-            this.addressItemList=new ArrayList<>();
             for(Address temp:addressList){
                 this.addressItemList.add(new AddressItem(temp));
             }

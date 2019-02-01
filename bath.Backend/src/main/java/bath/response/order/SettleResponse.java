@@ -12,7 +12,7 @@ public class SettleResponse extends Response {
     public SettleResponse() {
     }
 
-    public SettleResponse(double total, List<OrderGrouponItem> orderItems) {
+    public SettleResponse(double total,List<OrderGrouponItem> orderItems) {
         this.total = total;
         this.orderItems = orderItems;
     }

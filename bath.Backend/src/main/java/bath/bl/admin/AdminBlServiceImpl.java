@@ -6,6 +6,7 @@ import bath.dataservice.admin.AdminDataService;
 import bath.entity.admin.Admin;
 import bath.exception.DuplicateUsernameException;
 import bath.exception.NotExistException;
+import bath.response.AddResponse;
 import bath.response.BoolResponse;
 import bath.response.InfoResponse;
 import bath.response.admin.AdminItem;
@@ -58,10 +59,9 @@ public class AdminBlServiceImpl implements AdminBlService {
 	}
 
 	@Override
-	public InfoResponse addAdmin(String username, String password, String limits, String date, String face) throws DuplicateUsernameException {
+	public AddResponse addAdmin(String username, String password, String limits, String date, String face) throws DuplicateUsernameException {
 		if (!adminDataService.isExistent(username)) {
-			adminDataService.add(new Admin(username, password, limits, date, face));
-			return new InfoResponse();
+			return new AddResponse(adminDataService.add(new Admin(username, password, limits, date, face)));
 		} else {
 			throw new DuplicateUsernameException(username);
 		}

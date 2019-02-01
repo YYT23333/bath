@@ -3,10 +3,12 @@ package bath.data.address;
 import bath.data.dao.address.AddressDao;
 import bath.dataservice.address.AddressDataService;
 import bath.entity.address.Address;
+import bath.entity.user.User;
 import bath.exception.NotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,8 +19,8 @@ public class AddressDataServiceImpl implements AddressDataService {
         this.addressDao=addressDao;
     }
     @Override
-    public void add(Address address) {
-        addressDao.save(address);
+    public String add(Address address) {
+        return addressDao.save(address).getId()+"";
     }
 
     @Override
@@ -26,26 +28,31 @@ public class AddressDataServiceImpl implements AddressDataService {
         if(addressDao.findById(address.getId()).isPresent()){
             addressDao.save(address);
         }else{
-            throw new NotExistException("Address ID",address.getId());
+            throw new NotExistException("Address ID",address.getId()+"");
         }
     }
 
     @Override
-    public void deleteById(String id) throws NotExistException {
+    public void deleteById(int id) throws NotExistException {
         if(addressDao.findById(id).isPresent()){
             addressDao.deleteById(id);
         }else{
-            throw new NotExistException("Address ID",id);
+            throw new NotExistException("Address ID",id+"");
         }
     }
 
     @Override
-    public Address findById(String id) throws NotExistException {
+    public Address findById(int id) throws NotExistException {
         Optional<Address> addressOptional=addressDao.findById(id);
         if(addressOptional.isPresent()){
             return addressOptional.get();
         }else{
-            throw new NotExistException("Address ID",id);
+            throw new NotExistException("Address ID",id+"");
         }
+    }
+
+    @Override
+    public List<Address> findByUser(User user) {
+        return addressDao.findByUser(user);
     }
 }
