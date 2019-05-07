@@ -45,6 +45,8 @@ public class Groupon {
     @Column(name="image")
     private String image;
 
+    public Groupon() {
+    }
 
     public String getId() {
         return id;
