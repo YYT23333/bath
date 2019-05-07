@@ -1,5 +1,5 @@
 server:
-  port: 3389
+  port: 8080
 #  ssl:
 #    key-store: config/jrq.jks
 #    key-store-password: njujrq123

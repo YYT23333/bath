@@ -188,7 +188,9 @@ public class userController {
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
-    public ResponseEntity<Response> updateUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username, @RequestParam("role") String role,@RequestParam("phone") String phone, @RequestParam(name = "levelName") String levelName, @RequestParam(name = "integral") int integral) throws NotExistException {
+    public ResponseEntity<Response> updateUser(@RequestParam(name = "openid") String openid, @RequestParam(name = "username") String username,
+                                               @RequestParam("role") String role,@RequestParam("phone") String phone,
+                                               @RequestParam(name = "levelName") String levelName, @RequestParam(name = "integral") int integral) throws NotExistException {
         boolean is = true;
         InfoResponse r;
         if (headPath != "") {

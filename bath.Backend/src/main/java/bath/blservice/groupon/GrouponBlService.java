@@ -22,7 +22,7 @@ public interface GrouponBlService {
      * @param amount
      * @return 是否成功
      */
-    AddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime, Date putOnShelvesTime, Date pullOffShelvesTime, String description, int amount, String type);
+    AddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime, Date putOnShelvesTime, Date pullOffShelvesTime, String description, int amount, String type,String image);
 
     /**
      * 管理员删除团购
@@ -44,7 +44,7 @@ public interface GrouponBlService {
     * @param amount
     * @return 是否成功
     */
-    InfoResponse updateGroupon(String id,String name, double originalPrice, double price, Date takeEffectTime,Date loseEffectTime, Date putOnShelvesTime,Date pullOffShelvesTime,String description,int amount,String type)throws NotExistException;
+    InfoResponse updateGroupon(String id,String name, double originalPrice, double price, Date takeEffectTime,Date loseEffectTime, Date putOnShelvesTime,Date pullOffShelvesTime,String description,int amount,String type,String image)throws NotExistException;
 
     /**
      * 管理员上架团购

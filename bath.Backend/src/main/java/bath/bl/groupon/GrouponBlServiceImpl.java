@@ -24,7 +24,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         this.grouponDataService=grouponDataService;
     }
     @Override
-    public AddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime, Date putOnShelvesTime, Date pullOffShelvesTime, String description, int amount, String type) {
+    public AddResponse addGroupon(String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime, Date putOnShelvesTime, Date pullOffShelvesTime, String description, int amount, String type,String image) {
         Groupon groupon=new Groupon();
         groupon.setName(name);
         groupon.setOriginalPrice(originalPrice);
@@ -36,6 +36,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         groupon.setDescription(description);
         groupon.setAmount(amount);
         groupon.setType(GrouponType.valueOf(type));
+        groupon.setImage(image);
         String id=UUID.randomUUID().toString();
         groupon.setId(id);
         grouponDataService.add(groupon);
@@ -49,7 +50,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
     }
 
     @Override
-    public InfoResponse updateGroupon(String id, String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime,Date putOnShelvesTime,Date pullOffShelvesTime, String description, int amount,String type) throws NotExistException {
+    public InfoResponse updateGroupon(String id, String name, double originalPrice, double price, Date takeEffectTime, Date loseEffectTime,Date putOnShelvesTime,Date pullOffShelvesTime, String description, int amount,String type,String image) throws NotExistException {
         Groupon groupon=grouponDataService.findById(id);
         groupon.setName(name);
         groupon.setOriginalPrice(originalPrice);
@@ -61,6 +62,7 @@ public class GrouponBlServiceImpl implements GrouponBlService {
         groupon.setDescription(description);
         groupon.setAmount(amount);
         groupon.setType(GrouponType.valueOf(type));
+        groupon.setImage(image);
         grouponDataService.update(groupon);
         return new InfoResponse();
     }

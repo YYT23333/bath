@@ -42,6 +42,9 @@ public class Groupon {
     @Column(name="type")
     private GrouponType type;
 
+    @Column(name="image")
+    private String image;
+
 
     public String getId() {
         return id;
@@ -131,5 +134,13 @@ public class Groupon {
 
     public void setType(GrouponType type) {
         this.type = type;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

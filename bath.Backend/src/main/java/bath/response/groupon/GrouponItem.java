@@ -1,6 +1,7 @@
 package bath.response.groupon;
 
 import bath.entity.groupon.Groupon;
+import bath.publicdatas.grouponType.GrouponType;
 
 import java.util.Date;
 
@@ -15,6 +16,8 @@ public class GrouponItem {
     private Date pullOffShelveTime;
     private String description;
     private int amount;
+    private String image;
+    private GrouponType type;
 
     public GrouponItem() {
     }
@@ -30,6 +33,8 @@ public class GrouponItem {
         this.pullOffShelveTime=groupon.getPullOffShelveTime();
         this.description=groupon.getDescription();
         this.amount=groupon.getAmount();
+        this.image=groupon.getImage();
+        this.type=groupon.getType();
     }
 
     public String getId() {
@@ -110,5 +115,21 @@ public class GrouponItem {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public GrouponType getType() {
+        return type;
+    }
+
+    public void setType(GrouponType type) {
+        this.type = type;
     }
 }
