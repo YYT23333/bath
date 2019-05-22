@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface GrouponDao extends JpaRepository<Groupon, String> {
     List<Groupon> findByType(GrouponType type);
+    List<Groupon> findByName(String name);
 }

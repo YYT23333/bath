@@ -8,6 +8,7 @@ import bath.publicdatas.grouponType.GrouponType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,25 @@ public class GrouponDataServiceImpl implements GrouponDataService {
     @Override
     public List<Groupon> findByType(GrouponType type) {
         return grouponDao.findByType(type);
+    }
+
+    @Override
+    public List<Groupon> findByName(String name) {
+        return grouponDao.findByName(name);
+    }
+
+    @Override
+    public List<Groupon> findByKeyword(String keyword) {
+        List<Groupon> list = grouponDao.findAll();
+        List<Groupon> result = new ArrayList<>();
+        if (list != null && list.size() > 0) {
+            for (Groupon temp : list) {
+                if (temp.getDescription().contains(keyword)) {
+                    result.add(temp);
+                }
+            }
+        }
+        return result;
     }
 
     @Override

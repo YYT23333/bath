@@ -95,6 +95,16 @@ public class GrouponBlServiceImpl implements GrouponBlService {
     }
 
     @Override
+    public GrouponListResponse findByName(String name) {
+        return new GrouponListResponse(grouponDataService.findByName(name));
+    }
+
+    @Override
+    public GrouponListResponse findByKeyword(String keyword) {
+        return new GrouponListResponse(grouponDataService.findByKeyword(keyword));
+    }
+
+    @Override
     public GrouponListResponse getAllIntegral() {
         return new GrouponListResponse(grouponDataService.findByType(GrouponType.INTEGRAL));
     }

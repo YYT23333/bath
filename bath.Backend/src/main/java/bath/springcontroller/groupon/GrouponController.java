@@ -255,4 +255,32 @@ public class GrouponController {
         return new ResponseEntity<>(grouponBlService.pullOffShelves(id),HttpStatus.OK);
     }
 
+    @ApiOperation(value="通过名称查找团购",notes="通过名称查找团购")
+    @RequestMapping(value="/find/name",method = POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "团购名称", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
+            @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> findByName(@RequestParam(name="name")String name){
+        return new ResponseEntity<>(grouponBlService.findByName(name),HttpStatus.OK);
+    }
+
+    @ApiOperation(value="通过关键字查找团购",notes="通过关键字查找团购")
+    @RequestMapping(value="/find/keyword",method = POST)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "keyword", value = "关键字", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = InfoResponse.class),
+            @ApiResponse(code = 403, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> findByKeyword(@RequestParam(name="keyword")String keyword){
+        return new ResponseEntity<>(grouponBlService.findByKeyword(keyword),HttpStatus.OK);
+    }
+
 }

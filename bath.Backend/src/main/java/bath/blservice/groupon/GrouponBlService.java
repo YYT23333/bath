@@ -73,6 +73,18 @@ public interface GrouponBlService {
      * @return 所有的普通团购
      */
     GrouponListResponse getAllOrdinary();
+    /**
+     * 根据名称查找
+     * @param name
+     * @return
+     */
+    GrouponListResponse findByName(String name);
+    /**
+     * 根据关键字查找
+     * @param keyword
+     * @return
+     */
+    GrouponListResponse findByKeyword(String keyword);
 
     /**
      * 查找所有的积分兑换团购

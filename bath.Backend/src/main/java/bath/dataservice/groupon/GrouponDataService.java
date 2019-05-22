@@ -11,6 +11,8 @@ public interface GrouponDataService {
     String add(Groupon groupon);
     Groupon findById(String id) throws NotExistException;
     List<Groupon> findByType(GrouponType type);
+    List<Groupon> findByName(String name);
+    List<Groupon> findByKeyword(String keyword);
     void update(Groupon groupon) throws NotExistException;
     void deleteById(String id) throws NotExistException;
 }
